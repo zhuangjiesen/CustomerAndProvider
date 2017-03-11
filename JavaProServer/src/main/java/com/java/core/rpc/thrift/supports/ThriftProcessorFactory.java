@@ -23,7 +23,9 @@ public class ThriftProcessorFactory {
 	
 	private TMultiplexedProcessor multiplexedProcessor;
 	
-	
+	public TProcessor getProcessor(){
+		return multiplexedProcessor;
+	}
 	
 
 	public TMultiplexedProcessor getMultiplexedProcessor() {
@@ -64,6 +66,10 @@ public class ThriftProcessorFactory {
 	}
 	
 	
+	/**
+	 * 将实现类封装成TProcessor类的集合
+	 * 
+	 */
 	public void convertTargetToTProcessor(){
 		if (targets.isEmpty()) {
 			return ;
@@ -89,6 +95,10 @@ public class ThriftProcessorFactory {
 		initMultiplexedProcessor();
 	}
 	
+	/**
+	 * 初始化多服务调用过程 TMultiplexedProcessor 
+	 * 并且注册服务
+	 */
 	private void initMultiplexedProcessor(){
 		if (processors.isEmpty()) {
 			return ;
@@ -102,10 +112,6 @@ public class ThriftProcessorFactory {
 			multiplexedProcessor.registerProcessor(serviceName, processors.get(serviceName));
 		}
 	}
-	
-	
-	
-	
 	
 
 }

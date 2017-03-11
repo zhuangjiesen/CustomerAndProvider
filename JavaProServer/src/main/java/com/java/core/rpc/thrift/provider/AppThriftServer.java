@@ -27,8 +27,9 @@ import com.java.core.rpc.thrift.supports.ThriftProcessorFactory;
 
 public class AppThriftServer  implements ApplicationContextAware {
 	
+	/**线程池**/
 	private static ExecutorService executorService;
-	
+	// ApplicationContextAware 可以调用spring 生命周期获取上下文
 	private static ApplicationContext context;
 
 	public AppThriftServer() {
@@ -47,14 +48,17 @@ public class AppThriftServer  implements ApplicationContextAware {
 				System.out.println(" ThriftServer start ing ....");
 				TNonblockingServerSocket transport = null;
 				try { 
-					transport =new TNonblockingServerSocket(new InetSocketAddress(29999));				
-					
+					//非阻塞 ServerSocket
+					transport =new TNonblockingServerSocket(new InetSocketAddress(29999));	
+					// 获取 TProcessor 
 					ThriftProcessorFactory thriftProcessorFactory=context.getBean(ThriftProcessorFactory.class);
-					TMultiplexedProcessor processor =thriftProcessorFactory.getMultiplexedProcessor();
+					TProcessor processor =thriftProcessorFactory.getProcessor();
+					//  nio selectorThreads处理io，  workerThreads 处理服务调用过程
 					TThreadedSelectorServer.Args args = new TThreadedSelectorServer.Args(transport);
 					args.processor(processor);
+					// customer也要TFramedTransport对应 否则报错
 					args.transportFactory(new TFramedTransport.Factory());  
-				        //二进制协议  
+				    //二进制协议  
 					args.protocolFactory(new TBinaryProtocol.Factory());  
 					TThreadedSelectorServer server =new TThreadedSelectorServer(args);
 					server.serve();
@@ -75,16 +79,10 @@ public class AppThriftServer  implements ApplicationContextAware {
 		});
 		
 	}
-
-
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		// TODO Auto-generated method stub
 		context=applicationContext;
 	}
-	
-	
-	
-	
 
 }

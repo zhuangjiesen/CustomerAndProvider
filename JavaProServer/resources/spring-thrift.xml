@@ -12,10 +12,13 @@
 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd"
 >
 
+    <!-- 两个thrift 服务的实现类 -->
     <bean id="thriftInfoTestServiceTarget" class="com.java.core.rpc.thrift.service.impl.ThriftInfoTestServiceImpl" ></bean>
     <bean id="thriftTestServiceTarget" class="com.java.core.rpc.thrift.service.impl.ThriftTestServiceImpl" ></bean>
     
     
+    
+    <!-- Processor调用过程工厂，创建多服务类的工厂类  -->
     <bean id="thriftProcessorFactory"  class="com.java.core.rpc.thrift.supports.ThriftProcessorFactory" 
         init-method="convertTargetToTProcessor"
         >
@@ -28,7 +31,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
         
     </bean>
     
-    
+    <!--  thrift 的provider的启动类 -->
     <bean class="com.java.core.rpc.thrift.provider.AppThriftServer" init-method="initThriftServer"  ></bean>
     
     
