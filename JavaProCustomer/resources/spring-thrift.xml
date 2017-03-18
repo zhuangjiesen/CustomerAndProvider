@@ -12,6 +12,36 @@
 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd"
 >
 
+	<!-- thrift 连接池 -->
+	<bean id="thriftConnectionPool" class="com.java.core.rpc.thrift.supports.ThriftConnectionPool">
+		<property name="host" value="127.0.0.1"/>
+		<property name="port" value="29999"/>
+		<property name="maxConnections" value="20"/>
+		<property name="minConnections" value="5"/>
+
+	</bean>
+
+
+	<!-- 服务管理类 -->
+	<bean id="thriftServiceManager" class="com.java.core.rpc.thrift.supports.ThriftServiceManager" >
+		<property name="thriftConnectionPool" ref="thriftConnectionPool"></property>
+
+
+	</bean>
+	
+	<!-- 通过实现 FactoryBean ，在进行动态代理，实现对服务的配置-->
+	<bean id="thriftTestService" class="com.java.core.rpc.thrift.supports.ThriftSpringFactoryBean">
+		<property name="thriftServiceManager" ref="thriftServiceManager" ></property>
+		<property name="serviceIfaceClass" value="com.java.core.rpc.thrift.service.IThriftTestService.Iface" ></property>
+
+	</bean>
+
+
+	<bean id="thriftInfoTestService" class="com.java.core.rpc.thrift.supports.ThriftSpringFactoryBean">
+		<property name="thriftServiceManager" ref="thriftServiceManager" ></property>
+		<property name="serviceIfaceClass" value="com.java.core.rpc.thrift.service.IThriftInfoTestService.Iface" ></property>
+
+	</bean>
     
 </beans>
 	

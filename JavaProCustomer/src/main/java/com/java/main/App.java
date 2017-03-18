@@ -20,22 +20,64 @@ public class App
         init();
 		final TestService testService=applicationContext.getBean(TestService.class);
 
-        for (int i=0 ;i<10 ;i++) {
-        	new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					testService.doThriftTest();
-					
-					
-				}
-			}).start();
-        }
-        
+
+        ITestListener testListener = new ITestListener() {
+            public void doTest() {
+                testService.doThriftInfoTest();
+            }
+        };
+
+        doThriftTest(1,testListener);
     }
     
-    
+
+
+    public static void doThriftTest (int threadCounts,final ITestListener testListener){
+        final Object waitObj = new Object();
+
+        for (int i=0 ;i< threadCounts ;i++) {
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    // TODO Auto-generated method stub
+                    synchronized (waitObj) {
+                        try {
+                            waitObj.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+
+                    if (testListener != null) {
+                        testListener.doTest();
+                    }
+
+
+
+                }
+            }).start();
+        }
+
+
+        try {
+            Thread.currentThread().sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        synchronized (waitObj) {
+            waitObj.notifyAll();
+        }
+
+    }
+
+
+    //测试方法回调
+    public interface ITestListener {
+        public void doTest();
+    }
     
     public static void init(){
 

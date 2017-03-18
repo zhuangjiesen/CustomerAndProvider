@@ -14,13 +14,48 @@ import org.apache.thrift.transport.TTransport;
 
 import com.java.core.rpc.thrift.service.IThriftInfoTestService;
 
+/*
+* thrift 服务代理类
+*
+* */
 public class ThriftServiceProxyInvocation implements InvocationHandler {
 	
-	private final static String IFACE_NAME="$Iface";
-	private final static String CLIENT_NAME="$Client";
-	
+	/*thrift 服务类的iface 类*/
 	private Class ifaceClazz;
-	
+	/* thrift 连接池*/
+	private ThriftConnectionPool thriftConnectionPool;
+
+	@Override
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		// TODO Auto-generated method stub
+		System.out.println(" ThriftServiceProxyInvocation  invoke doing before ....");
+		if (ifaceClazz == null) {
+			return null;
+		}
+		Object result = null;
+		try {
+			String serviceIfaceClassName = ifaceClazz.getName();
+			String serviceClassName = serviceIfaceClassName.replace(ThriftConstant.IFACE_NAME,"");
+			String serviceClientClassName = serviceIfaceClassName.replace(ThriftConstant.IFACE_NAME,ThriftConstant.CLIENT_NAME);
+			Class clientClazz = Class.forName(serviceClientClassName);
+			// 连接池中选择 protocol
+			TProtocol protocol = thriftConnectionPool.getProtocol(serviceClassName);
+			Object clientInstance= clientClazz.getConstructor(TProtocol.class).newInstance(protocol);
+			result=method.invoke(clientInstance, args);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			// 回收 protocol
+			thriftConnectionPool.recycleProtocol();
+		}
+		
+		System.out.println(" ThriftServiceProxyInvocation  invoke doing after ....");
+		
+		return result;
+	}
+
+
 
 	public Class getIfaceClazz() {
 		return ifaceClazz;
@@ -32,48 +67,12 @@ public class ThriftServiceProxyInvocation implements InvocationHandler {
 	}
 
 
+	public ThriftConnectionPool getThriftConnectionPool() {
+		return thriftConnectionPool;
+	}
 
-
-
-
-
-	@Override
-	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		// TODO Auto-generated method stub
-		System.out.println(" ThriftServiceProxyInvocation  invoke doing before ....");
-		if (ifaceClazz == null) {
-			return null;
-		}
-		TTransport transport = null;
-		Object result = null;
-		try {
-
-			 // 设置调用的服务地址为本地，端口 
-	        transport = new TSocket("127.0.0.1", 29999); 
-	        TFramedTransport framedTransport =new TFramedTransport(transport);
-	        TBinaryProtocol binaryProtocol =new TBinaryProtocol(framedTransport);
-	        TMultiplexedProtocol multiplexedProtocol =new TMultiplexedProtocol(binaryProtocol, IThriftInfoTestService.class.getName());
-	        transport.open();
-	        
-			String ifaceName =ifaceClazz.getName();
-			String className = ifaceName.substring(0, ifaceName.lastIndexOf(IFACE_NAME));
-			String clientName = className.concat(CLIENT_NAME);
-			Class clientClazz = Class.forName(clientName);
-	        
-			Object clientInstance= clientClazz.getConstructor(TProtocol.class).newInstance(multiplexedProtocol);
-			result=method.invoke(clientInstance, args);
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		} finally {
-			if (transport != null) {
-				transport.close();
-			}
-		}
-		
-		System.out.println(" ThriftServiceProxyInvocation  invoke doing after ....");
-		
-		return result;
+	public void setThriftConnectionPool(ThriftConnectionPool thriftConnectionPool) {
+		this.thriftConnectionPool = thriftConnectionPool;
 	}
 
 }
