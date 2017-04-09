@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ThriftServiceManager {
 
     private ThriftConnectionPool thriftConnectionPool;
+    private IThriftExceptionResolver thriftExceptionResolver;
 
 
 //    private final ConcurrentHashMap<String,Object> thriftClientCache = new ConcurrentHashMap();
@@ -22,6 +23,7 @@ public class ThriftServiceManager {
         }
         T client =null;
         ThriftServiceProxyInvocation proxyInvocation =new ThriftServiceProxyInvocation();
+        proxyInvocation.setThriftExceptionResolver(thriftExceptionResolver);
         // 代理接口类
         proxyInvocation.setIfaceClazz(serviceIfaceClass);
         // 设置连接池

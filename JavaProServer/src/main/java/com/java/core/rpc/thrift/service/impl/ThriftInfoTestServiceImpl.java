@@ -8,13 +8,14 @@ import org.apache.thrift.TException;
 
 import com.alibaba.fastjson.JSONObject;
 import com.java.core.rpc.thrift.service.IThriftInfoTestService;
+import com.java.helper.ThreadHelper;
 
 public class ThriftInfoTestServiceImpl implements IThriftInfoTestService.Iface {
 
 	@Override
 	public String showInfoData(String name, boolean success, Map<String, String> map) throws TException {
 		// TODO Auto-generated method stub
-		
+		ThreadHelper.sleep(200);
 		
 		
 		System.out.println(" ThriftInfoTestServiceImpl doing ...showInfoData()... ");

@@ -25,10 +25,15 @@ public class ThriftServiceProxyInvocation implements InvocationHandler {
 	/* thrift 连接池*/
 	private ThriftConnectionPool thriftConnectionPool;
 
+
+	private IThriftExceptionResolver thriftExceptionResolver;
+
+
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		// TODO Auto-generated method stub
-		System.out.println(" ThriftServiceProxyInvocation  invoke doing before ....");
+		//doSomething Before....
+//		System.out.println(" ThriftServiceProxyInvocation  invoke doing before ....");
 		if (ifaceClazz == null) {
 			return null;
 		}
@@ -41,17 +46,23 @@ public class ThriftServiceProxyInvocation implements InvocationHandler {
 			// 连接池中选择 protocol
 			TProtocol protocol = thriftConnectionPool.getProtocol(serviceClassName);
 			Object clientInstance= clientClazz.getConstructor(TProtocol.class).newInstance(protocol);
+
 			result=method.invoke(clientInstance, args);
+//			System.out.println("result : "+result);
 		} catch (Exception e) {
+			//异常处理
 			// TODO: handle exception
+			if (thriftExceptionResolver != null) {
+				thriftExceptionResolver.doException(e);
+			}
 			e.printStackTrace();
 		} finally {
 			// 回收 protocol
 			thriftConnectionPool.recycleProtocol();
 		}
-		
-		System.out.println(" ThriftServiceProxyInvocation  invoke doing after ....");
-		
+		//doSomething After....
+//		System.out.println(" ThriftServiceProxyInvocation  invoke doing after ....");
+
 		return result;
 	}
 
@@ -75,4 +86,12 @@ public class ThriftServiceProxyInvocation implements InvocationHandler {
 		this.thriftConnectionPool = thriftConnectionPool;
 	}
 
+
+	public IThriftExceptionResolver getThriftExceptionResolver() {
+		return thriftExceptionResolver;
+	}
+
+	public void setThriftExceptionResolver(IThriftExceptionResolver thriftExceptionResolver) {
+		this.thriftExceptionResolver = thriftExceptionResolver;
+	}
 }

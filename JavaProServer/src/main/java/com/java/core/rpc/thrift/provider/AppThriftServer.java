@@ -9,6 +9,7 @@ import org.apache.thrift.TMultiplexedProcessor;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.TProcessorFactory;
 import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadedSelectorServer;
 import org.apache.thrift.transport.TFramedTransport;
@@ -19,49 +20,46 @@ import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import com.apple.eawt.Application;
 import com.java.core.rpc.thrift.supports.ThriftProcessorFactory;
 
-public class AppThriftServer  implements ApplicationContextAware {
+public class AppThriftServer  implements ApplicationContextAware,InitializingBean {
 	
+
 	/**线程池**/
 	private static ExecutorService executorService;
 	// ApplicationContextAware 可以调用spring 生命周期获取上下文
 	private static ApplicationContext context;
 
+	
+	private TServerTransport transport;
+	private TThreadedSelectorServer.Args args;
+	private TServer server;
+	
+
 	public AppThriftServer() {
 		super();
-		// TODO Auto-generated constructor stub
 		executorService = Executors.newSingleThreadExecutor();
 	}
 	
 	
 	public void initThriftServer(){
+		//初始化设置
+		initConfig();	
 		executorService.execute(new Runnable() {
 			
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
 				System.out.println(" ThriftServer start ing ....");
-				TNonblockingServerSocket transport = null;
 				try { 
-					//非阻塞 ServerSocket
-					transport =new TNonblockingServerSocket(new InetSocketAddress(29999));	
-					// 获取 TProcessor 
-					ThriftProcessorFactory thriftProcessorFactory=context.getBean(ThriftProcessorFactory.class);
-					TProcessor processor =thriftProcessorFactory.getProcessor();
-					//  nio selectorThreads处理io，  workerThreads 处理服务调用过程
-					TThreadedSelectorServer.Args args = new TThreadedSelectorServer.Args(transport);
-					args.processor(processor);
-					// customer也要TFramedTransport对应 否则报错
-					args.transportFactory(new TFramedTransport.Factory());  
-				    //二进制协议  
-					args.protocolFactory(new TBinaryProtocol.Factory());  
-					TThreadedSelectorServer server =new TThreadedSelectorServer(args);
-					server.serve();
+					if (!server.isServing()) {
+						server.serve();
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
@@ -70,11 +68,6 @@ public class AppThriftServer  implements ApplicationContextAware {
 					}
 					
 				}
-				
-				
-				
-				
-				
 			}
 		});
 		
@@ -84,5 +77,54 @@ public class AppThriftServer  implements ApplicationContextAware {
 		// TODO Auto-generated method stub
 		context=applicationContext;
 	}
+
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		// TODO Auto-generated method stub
+		
+		
+	}
+	
+
+	
+	/**
+	 * 初始化参数
+	 */
+	private void initConfig(){
+	}
+
+
+	public TServerTransport getTransport() {
+		return transport;
+	}
+
+
+	public void setTransport(TServerTransport transport) {
+		this.transport = transport;
+	}
+
+
+	public TThreadedSelectorServer.Args getArgs() {
+		return args;
+	}
+
+
+	public void setArgs(TThreadedSelectorServer.Args args) {
+		this.args = args;
+	}
+
+
+	public TServer getServer() {
+		return server;
+	}
+
+
+	public void setServer(TServer server) {
+		this.server = server;
+	}
+	
+	
+	
 
 }

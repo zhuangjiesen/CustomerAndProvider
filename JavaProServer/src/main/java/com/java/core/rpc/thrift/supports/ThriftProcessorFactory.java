@@ -7,10 +7,20 @@ import java.util.Set;
 
 import org.apache.thrift.TMultiplexedProcessor;
 import org.apache.thrift.TProcessor;
+import org.springframework.beans.factory.FactoryBean;
 
 import com.java.core.rpc.thrift.service.IThriftInfoTestService;
 
-public class ThriftProcessorFactory {
+/**
+ * 
+ * 实现 FactoryBean 接口
+ * getObjectType 返回 TProcessor 使得可以在spring 中直接设置为 TProcessor类型的 属性
+ * @author zhuangjiesen
+ *
+ */
+public class ThriftProcessorFactory implements FactoryBean<TProcessor> {
+	
+	
 	
 	private final static String IFACE_NAME="$Iface";
 	private final static String PROCESS_NAME="$Processor";
@@ -111,6 +121,27 @@ public class ThriftProcessorFactory {
 			}
 			multiplexedProcessor.registerProcessor(serviceName, processors.get(serviceName));
 		}
+	}
+
+
+	@Override
+	public TProcessor getObject() throws Exception {
+		// TODO Auto-generated method stub
+		return getProcessor();
+	}
+
+
+	@Override
+	public Class<?> getObjectType() {
+		// TODO Auto-generated method stub
+		return TProcessor.class;
+	}
+
+
+	@Override
+	public boolean isSingleton() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 	
 

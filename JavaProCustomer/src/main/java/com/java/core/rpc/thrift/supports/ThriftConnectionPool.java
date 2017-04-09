@@ -6,35 +6,48 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
+import org.apache.thrift.transport.TTransportException;
 import org.springframework.beans.factory.InitializingBean;
 
+import java.lang.reflect.Constructor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by zhuangjiesen on 2017/3/17.
  */
 public class ThriftConnectionPool implements InitializingBean {
+    //默认协议
+    private final Class DEFAULT_PROTOCOL_CLASS = TBinaryProtocol.class;
 
 
     private String host;
     private int port;
     private int minConnections = 5;
     private int maxConnections = 10;
-    private int connectionsCount = 0;
+    private volatile int connectionsCount = 0;
+    private int connectTimeout;
+    private int socketTimeout;
+    private int timeout;
+
+    private Class protocolTypeClass;
+
+
 
     private int waitQueueSeconds = 10 ;
     private int recycleSeconds=10;
 
     // TProtocol 连接
     private LinkedBlockingQueue<TProtocol> blockingQueue;
-    private LinkedBlockingQueue<Thread> waitingThreadBlockingQueue ;
+//    private LinkedBlockingQueue<Thread> waitingThreadBlockingQueue ;
+    //公平锁 排队处理
+    private Lock threadLock = new ReentrantLock(true);
 
     private ThreadLocal<TProtocol> protocolLocal = new ThreadLocal<TProtocol>();
-
-
 
 
     //回收线程
@@ -47,11 +60,11 @@ public class ThriftConnectionPool implements InitializingBean {
     //初始化连接池
     public synchronized void initThriftConnectionPool(){
         blockingQueue = new LinkedBlockingQueue<TProtocol>();
-        //初始化线程排队队列
-        waitingThreadBlockingQueue = new LinkedBlockingQueue<Thread>();
         for (int i = 0 ; i < minConnections ; i++) {
             blockingQueue.add(createNewProtocol());
         }
+        setDefaultProtocolClass();
+
 
         //回收线程
         scheduledExecutorService.schedule(new Runnable() {
@@ -66,21 +79,46 @@ public class ThriftConnectionPool implements InitializingBean {
 
     }
 
+    public void setDefaultProtocolClass(){
+        if (protocolTypeClass != null) {
+            return ;
+        }
+        protocolTypeClass = DEFAULT_PROTOCOL_CLASS;
+    }
+
+
     //创建协议
     public synchronized TProtocol createNewProtocol(){
         TProtocol protocol = null;
         if (connectionsCount < maxConnections) {
             try {
                 TSocket socket = new TSocket(host,port);
+                socket.setConnectTimeout(connectTimeout);
+                socket.setSocketTimeout(socketTimeout);
+                socket.setTimeout(timeout);
+
+
+
                 TFramedTransport framedTransport = new TFramedTransport(socket);
-                TBinaryProtocol binaryProtocol = new TBinaryProtocol(framedTransport);
-                binaryProtocol.getTransport().open();
-                protocol = binaryProtocol;
-                connectionsCount ++ ;
+
+
+
+
+                setDefaultProtocolClass();
+                Constructor protocalConstructor = protocolTypeClass.getConstructor(TTransport.class);
+                protocol =(TProtocol) protocalConstructor.newInstance(framedTransport);
+
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-
+                if (protocol != null) {
+                    connectionsCount ++ ;
+                    try {
+                        protocol.getTransport().open();
+                    } catch (TTransportException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
         return protocol;
@@ -93,21 +131,15 @@ public class ThriftConnectionPool implements InitializingBean {
         protocol = blockingQueue.poll();
         if (protocol == null) {
             protocol = createNewProtocol();
+            //大于最大连接数创建 protocol = null
             if (protocol == null) {
-                waitingThreadBlockingQueue.add(Thread.currentThread());
-                while ( waitingThreadBlockingQueue.peek().getId() != Thread.currentThread().getId() ) {
-                    //当前线程排在最前面
-                    if (waitingThreadBlockingQueue.peek().getState() == Thread.State.TERMINATED) {
-                        //队列最前的线程已经死了
-                        waitingThreadBlockingQueue.poll();
-                    }
-                }
+                threadLock.lock();
                 try {
-                    protocol = blockingQueue.poll(waitQueueSeconds,TimeUnit.SECONDS);
+                    protocol = blockingQueue.take();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    waitingThreadBlockingQueue.poll();
+                    threadLock.unlock();
                 }
 
             }
@@ -233,4 +265,35 @@ public class ThriftConnectionPool implements InitializingBean {
     }
 
 
+    public Class getProtocolTypeClass() {
+        return protocolTypeClass;
+    }
+
+    public void setProtocolTypeClass(Class protocolTypeClass) {
+        this.protocolTypeClass = protocolTypeClass;
+    }
+
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public int getSocketTimeout() {
+        return socketTimeout;
+    }
+
+    public void setSocketTimeout(int socketTimeout) {
+        this.socketTimeout = socketTimeout;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
 }

@@ -18,6 +18,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 		<property name="port" value="29999"/>
 		<property name="maxConnections" value="20"/>
 		<property name="minConnections" value="5"/>
+		<property name="protocolTypeClass" value="org.apache.thrift.protocol.TCompactProtocol"/>
 
 	</bean>
 
