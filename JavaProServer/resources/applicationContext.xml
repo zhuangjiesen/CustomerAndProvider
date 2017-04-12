@@ -14,8 +14,10 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 
     
     <bean id="beanHelper" class="com.java.helper.BeanHelper" ></bean>
-    
+    <!-- 
     <import resource="./spring-thrift.xml"/>
+     -->
+    <import resource="./spring-netty.xml"/>
     
     
 </beans>

@@ -104,5 +104,6 @@
     <orderEntry type="library" name="Maven: asm:asm-commons:3.3.1" level="project" />
     <orderEntry type="library" name="Maven: asm:asm-tree:3.3.1" level="project" />
     <orderEntry type="library" name="Maven: asm:asm-util:3.3.1" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-all:4.1.9.Final" level="project" />
   </component>
 </module>
