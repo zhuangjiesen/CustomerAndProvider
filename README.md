@@ -5,3 +5,8 @@
 
 ### Thrift连接池，spring配置化，透明化调用 项目博客地址：
 [项目博客地址](http://blog.csdn.net/zjs40/article/details/63265407)
+
+
+### WebSocket 与 netty服务器 实战 项目博客地址
+[项目博客地址](http://blog.csdn.net/zjs40/article/details/70185790)
+
