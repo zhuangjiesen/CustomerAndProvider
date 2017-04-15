@@ -11,7 +11,7 @@
 [项目源码地址](https://github.com/zhuangjiesen/DragsunNetty/tree/master/WebSocketNetty)
 
 ##### [前端页面代码](https://github.com/zhuangjiesen/DragsunNetty/tree/master/WebSocketNetty/FrontEnd)
-##### [netty服务器代码](https://github.com/zhuangjiesen/DragsunNetty/tree/master/WebSocketNetty/NettyServer/JavaProServer)
+##### [netty服务器代码](https://github.com/zhuangjiesen/DragsunNetty/tree/master/WebSocketNetty/WebSocketNettyServer)
 
 ### 前端页面
 
