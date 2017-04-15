@@ -1,5 +1,7 @@
 # WebSocket 与 netty服务器 实战
 
+### netty版本 4.1.9.Final 
+
 #### 后续献上 线上的例子....
 
 #### websocket原理是 
