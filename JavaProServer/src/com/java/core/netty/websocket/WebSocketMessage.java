@@ -35,13 +35,18 @@ public class WebSocketMessage {
 		this.content = content;
 	}
 	
-	public String toJSONString() {
-		return JSONObject.toJSONString(this);
-	}
 	public String getIpAddress() {
 		return ipAddress;
 	}
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
 	}
+
+	/**
+	 * 生成json串传到前端
+	 */
+	public String toJSONString() {
+		return JSONObject.toJSONString(this);
+	}
+
 }

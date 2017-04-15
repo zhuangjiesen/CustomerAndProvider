@@ -1,7 +1,13 @@
-package com.java.core.netty.websocket.adapter;
+package com.java.core.netty.websocket;
 
 import io.netty.channel.ChannelHandlerContext;
 
+
+/*
+* websocket
+* ChannelHandlerContext 对象
+*
+* */
 public class WebSocketHandlerContext {
 	private String id;
 	private String name;

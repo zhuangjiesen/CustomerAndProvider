@@ -3,10 +3,6 @@ package com.java.core.netty.websocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.java.core.netty.websocket.adapter.WebSocketMessageAdapter;
-import com.java.core.netty.websocket.handler.AppWebSocketRequestHandler;
-import com.java.core.netty.websocket.handler.WebSocketRequestHandler;
-
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -18,14 +14,10 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
 public class AppWebSocketNettyServer {
-	
-	
 	private ExecutorService executorService = Executors.newSingleThreadExecutor();
-	
 
 	public AppWebSocketNettyServer() {
 		super();
@@ -62,17 +54,15 @@ public class AppWebSocketNettyServer {
 		                        throws Exception {  
 
 		                	ChannelPipeline p = socketChannel.pipeline();
-		                	
+
+							WebSocketIpTableHandler ipTableHandler = new WebSocketIpTableHandler();
+							p.addLast(ipTableHandler);
+
+							//请求处理类
 		                	WebSocketServerHandler webSocketServerHandler = new WebSocketServerHandler();
-		                	
-		                	AppWebSocketRequestHandler appWebSocketRequestHandler = new AppWebSocketRequestHandler();
-		                	
-		                	WebSocketMessageAdapter webSocketMsgAdapter = new WebSocketMessageAdapter();
-		                	appWebSocketRequestHandler.setWebSocketMsgAdapter(webSocketMsgAdapter);
-		                	
-		                	webSocketServerHandler.setRequestHandler(appWebSocketRequestHandler);
-		                	
-		                	
+							WebSocketMessageManager webSocketMessageManager = new WebSocketMessageManager();
+							webSocketServerHandler.setWebSocketMessageManager(webSocketMessageManager);
+
 		                	p.addLast("http-codec", new HttpServerCodec());
 		                	p.addLast("aggregator", new HttpObjectAggregator(65536));
 		                	p.addLast("http-chunked", new ChunkedWriteHandler());
@@ -85,10 +75,7 @@ public class AppWebSocketNettyServer {
 		            
 		            if (f.isSuccess()) {  
 		               System.out.println("启动Netty服务成功 !! ");  
-		            }  
-		            
-		            
-		            
+		            }
 		  
 		        } catch (Exception e) {  
 		            e.printStackTrace();  
