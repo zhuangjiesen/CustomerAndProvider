@@ -16,8 +16,9 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 	<bean id="thriftConnectionPool" class="com.java.core.rpc.thrift.supports.ThriftConnectionPool">
 		<property name="host" value="127.0.0.1"/>
 		<property name="port" value="29999"/>
-		<property name="maxConnections" value="20"/>
+		<property name="maxConnections" value="10"/>
 		<property name="minConnections" value="5"/>
+		<property name="keepAlive" value="15"/>
 		<property name="protocolTypeClass" value="org.apache.thrift.protocol.TCompactProtocol"/>
 
 	</bean>

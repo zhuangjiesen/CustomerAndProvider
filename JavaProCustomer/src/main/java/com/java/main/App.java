@@ -27,7 +27,7 @@ public class App
             }
         };
 
-        doThriftTest(2000,testListener);
+        doThriftTest(200,testListener);
     }
     
 

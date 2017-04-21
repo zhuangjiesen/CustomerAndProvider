@@ -10,10 +10,12 @@ import org.apache.thrift.transport.TTransportException;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.lang.reflect.Constructor;
+import java.util.Iterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -23,13 +25,18 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ThriftConnectionPool implements InitializingBean {
     //默认协议
     private final Class DEFAULT_PROTOCOL_CLASS = TBinaryProtocol.class;
+    private final int SCHEDULE_TIME=5;
 
 
     private String host;
     private int port;
     private int minConnections = 5;
     private int maxConnections = 10;
-    private volatile int connectionsCount = 0;
+
+
+//    private volatile int connectionsCount = 0;
+    private volatile AtomicInteger connectionsCount = new AtomicInteger(0);
+
     private int connectTimeout;
     private int socketTimeout;
     private int timeout;
@@ -39,15 +46,20 @@ public class ThriftConnectionPool implements InitializingBean {
 
 
     private int waitQueueSeconds = 10 ;
-    private int recycleSeconds=10;
+
+    //保持存活的连接时间 秒
+    private int keepAlive=5;
 
     // TProtocol 连接
-    private LinkedBlockingQueue<TProtocol> blockingQueue;
+    private LinkedBlockingQueue<ProtocolManager> blockingQueue;
 //    private LinkedBlockingQueue<Thread> waitingThreadBlockingQueue ;
     //公平锁 排队处理
     private Lock threadLock = new ReentrantLock(true);
 
-    private ThreadLocal<TProtocol> protocolLocal = new ThreadLocal<TProtocol>();
+    private Lock createLock = new ReentrantLock(true);
+
+
+    private ThreadLocal<ProtocolManager> protocolLocal = new ThreadLocal<ProtocolManager>();
 
 
     //回收线程
@@ -59,23 +71,23 @@ public class ThriftConnectionPool implements InitializingBean {
 
     //初始化连接池
     public synchronized void initThriftConnectionPool(){
-        blockingQueue = new LinkedBlockingQueue<TProtocol>();
+        blockingQueue = new LinkedBlockingQueue<ProtocolManager>();
         for (int i = 0 ; i < minConnections ; i++) {
-            blockingQueue.add(createNewProtocol());
+            ProtocolManager protocolManager = new ProtocolManager();
+            protocolManager.setProtocol(createNewProtocol());
+            blockingQueue.add(protocolManager);
         }
         setDefaultProtocolClass();
 
-
         //回收线程
-        scheduledExecutorService.schedule(new Runnable() {
+        scheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
             public void run() {
-
 
                 reducePool();
 
 
             }
-        },recycleSeconds, TimeUnit.SECONDS);
+        },SCHEDULE_TIME,SCHEDULE_TIME, TimeUnit.SECONDS);
 
     }
 
@@ -88,70 +100,101 @@ public class ThriftConnectionPool implements InitializingBean {
 
 
     //创建协议
-    public synchronized TProtocol createNewProtocol(){
+    public TProtocol createNewProtocol(){
         TProtocol protocol = null;
-        if (connectionsCount < maxConnections) {
-            try {
+
+
+        createLock.lock();
+        try {
+            if (connectionsCount.get() < maxConnections) {
+
                 TSocket socket = new TSocket(host,port);
                 socket.setConnectTimeout(connectTimeout);
                 socket.setSocketTimeout(socketTimeout);
                 socket.setTimeout(timeout);
 
-
-
                 TFramedTransport framedTransport = new TFramedTransport(socket);
-
-
-
 
                 setDefaultProtocolClass();
                 Constructor protocalConstructor = protocolTypeClass.getConstructor(TTransport.class);
                 protocol =(TProtocol) protocalConstructor.newInstance(framedTransport);
+            }
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (protocol != null) {
-                    connectionsCount ++ ;
-                    try {
-                        protocol.getTransport().open();
-                    } catch (TTransportException e) {
-                        e.printStackTrace();
-                    }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (protocol != null) {
+                connectionsCount.incrementAndGet();
+                try {
+                    protocol.getTransport().open();
+                } catch (TTransportException e) {
+                    e.printStackTrace();
                 }
             }
+            createLock.unlock();
         }
+
+
+
         return protocol;
     }
+
+
 
     //从连接池中获取Protocol
     public TProtocol getProtocolInternal(){
         protocolLocal.remove();
+
         TProtocol protocol = null;
-        protocol = blockingQueue.poll();
-        if (protocol == null) {
+
+        ProtocolManager protocolManager = blockingQueue.poll();
+        if (protocolManager != null) {
+            protocol = protocolManager.getProtocol();
+            if (protocol != null && (!protocol.getTransport().isOpen())) {
+                //取到 protocol 但是已经关闭 重新创建
+                protocol = createNewProtocol();
+                protocolManager.setProtocol(protocol);
+            }
+
+        } else {
             protocol = createNewProtocol();
-            //大于最大连接数创建 protocol = null
-            if (protocol == null) {
+            if (protocol != null) {
+                //创建新的
+                protocolManager = new ProtocolManager();
+                protocolManager.setProtocol(protocol);
+            } else {
+                //没有就等待队列处理
                 threadLock.lock();
                 try {
-                    protocol = blockingQueue.take();
+                    protocolManager = blockingQueue.take();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
                     threadLock.unlock();
                 }
 
+                protocol = protocolManager.getProtocol();
+                if (protocol != null && (!protocol.getTransport().isOpen())) {
+                    //取到 protocol 但是已经关闭 重新创建
+                    protocol = createNewProtocol();
+                    protocolManager.setProtocol(protocol);
+                }
             }
-//            waitingThreadBlockingQueue
 
-        } else if (protocol != null && (!protocol.getTransport().isOpen())) {
-            //取到 protocol 但是已经关闭 重新创建
-            protocol = createNewProtocol();
         }
-        protocolLocal.set(protocol);
+
+
+        if (protocolManager != null) {
+            protocol = protocolManager.getProtocol();
+        }
+        protocolLocal.set(protocolManager);
         return protocol;
     }
+
+
+
+
 
 
     public TProtocol getProtocol(String serviceName){
@@ -159,13 +202,19 @@ public class ThriftConnectionPool implements InitializingBean {
         return multiplexedProtocol;
     }
 
+
+
+
     public void recycleProtocol(){
-        TProtocol protocol = protocolLocal.get();
-        if (protocol != null) {
-            if (protocol.getTransport() != null && (!protocol.getTransport().isOpen())) {
+        ProtocolManager protocolManager = protocolLocal.get();
+        TProtocol protocol = protocolManager.getProtocol();
+        if (protocolManager != null) {
+            // Transport 已经关闭 重新创建
+            if (protocolManager.getProtocol().getTransport() != null && (!protocolManager.getProtocol().getTransport().isOpen())) {
                 protocol = createNewProtocol();
+                protocolManager.setProtocol(protocol);
             }
-            blockingQueue.add(protocol);
+            blockingQueue.add(protocolManager);
         }
         protocolLocal.remove();
     }
@@ -226,13 +275,14 @@ public class ThriftConnectionPool implements InitializingBean {
     //关闭连接
     public synchronized void destroy(){
         try {
-            TProtocol protocol = blockingQueue.take();
-            while (protocol != null) {
-                if (protocol.getTransport().isOpen()) {
-                    protocol.getTransport().close();
+
+            ProtocolManager protocolManager = blockingQueue.take();
+            while (protocolManager != null) {
+                if (protocolManager.getProtocol().getTransport().isOpen()) {
+                    protocolManager.getProtocol().getTransport().close();
                 }
-                protocol = blockingQueue.take();
-                connectionsCount --;
+                protocolManager = blockingQueue.take();
+                connectionsCount.decrementAndGet();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -241,23 +291,48 @@ public class ThriftConnectionPool implements InitializingBean {
     }
 
 
+    /*
+    * 定时器处理多出的连接长期不适用 lru
+    * */
+    private void reducePool(){
 
-    private synchronized void reducePool(){
-        if (connectionsCount > minConnections) {
-            int connectionsCountTemp = connectionsCount;
-            TProtocol protocol = null;
-            for (int i = connectionsCountTemp ; i > minConnections ; i--) {
-                try {
-                    protocol = blockingQueue.poll(waitQueueSeconds,TimeUnit.SECONDS);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
+
+        if (connectionsCount.get() > minConnections) {
+
+            ProtocolManager protocolManager = blockingQueue.peek();
+            long nowTime = System.currentTimeMillis();
+
+            int count = connectionsCount.get();
+            while (protocolManager != null) {
+                if (connectionsCount.get() <= minConnections) {
+                    break;
                 }
-                //关闭连接
-                if (protocol != null && protocol.getTransport() != null && (protocol.getTransport().isOpen())){
-                    protocol.getTransport().close();
+                //遍历完出队列
+                if (count < 0) {
+                    break;
                 }
 
+                long keepAliveTime = keepAlive * 1000;
+
+                long lru = protocolManager.getLru();
+                //已经 有 keepAlive 秒没有用到了  连接关闭
+                if ((nowTime - lru) > keepAliveTime) {
+                    try {
+                       TProtocol protocol = protocolManager.getProtocol();
+                        //关闭连接
+                        if (protocol != null && protocol.getTransport() != null && (protocol.getTransport().isOpen())){
+                            protocol.getTransport().close();
+                        }
+                    } finally {
+                        blockingQueue.poll();
+                        //连接减一
+                        connectionsCount.decrementAndGet();
+                    }
+
+                }
+
+                protocolManager = blockingQueue.peek();
+                count --;
             }
 
         }

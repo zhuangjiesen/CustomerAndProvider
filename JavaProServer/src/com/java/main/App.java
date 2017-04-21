@@ -1,5 +1,8 @@
 package com.java.main;
 
+import ch.qos.logback.ext.spring.web.LogbackConfigListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
@@ -13,10 +16,13 @@ public class App
 {
 	
 	private static ApplicationContext applicationContext;
-	
-    public static void main( String[] args )
+
+	public static void main( String[] args )
     {
+
         System.out.println( "Hello World!" );
+
+
         init();
         
         
