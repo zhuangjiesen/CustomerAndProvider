@@ -1,10 +1,14 @@
 package com.java.core.rpc.thrift.supports;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.thrift.TServiceClient;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TMultiplexedProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -29,9 +33,13 @@ public class ThriftServiceProxyInvocation implements InvocationHandler {
 	private IThriftExceptionResolver thriftExceptionResolver;
 
 
+	private final ConcurrentHashMap<String,Object> thriftClientCache = new ConcurrentHashMap();
+
+
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		// TODO Auto-generated method stub
+		
 		//doSomething Before....
 //		System.out.println(" ThriftServiceProxyInvocation  invoke doing before ....");
 		if (ifaceClazz == null) {
@@ -41,13 +49,40 @@ public class ThriftServiceProxyInvocation implements InvocationHandler {
 		try {
 			String serviceIfaceClassName = ifaceClazz.getName();
 			String serviceClassName = serviceIfaceClassName.replace(ThriftConstant.IFACE_NAME,"");
-			String serviceClientClassName = serviceIfaceClassName.replace(ThriftConstant.IFACE_NAME,ThriftConstant.CLIENT_NAME);
-			Class clientClazz = Class.forName(serviceClientClassName);
 			// 连接池中选择 protocol
 			TProtocol protocol = thriftConnectionPool.getProtocol(serviceClassName);
-			Object clientInstance= clientClazz.getConstructor(TProtocol.class).newInstance(protocol);
 
+			String cacheName = serviceClassName;
+			Object clientInstance = null;
+			if (thriftClientCache.containsKey(cacheName)) {
+					ThriftClientManager thriftClientManager = (ThriftClientManager) thriftClientCache.get(cacheName);
+
+					//获取缓存构造函数
+					Constructor constructor = thriftClientManager.getClientClazz().getConstructor(TProtocol.class);
+					clientInstance = constructor.newInstance(protocol);
+			} else {
+					String serviceClientClassName = serviceIfaceClassName.replace(ThriftConstant.IFACE_NAME,ThriftConstant.CLIENT_NAME);
+					Class clientClazz = Class.forName(serviceClientClassName);
+					Constructor constructor = clientClazz.getConstructor(TProtocol.class);
+					clientInstance = constructor.newInstance(protocol);
+
+					//封装成对象
+					ThriftClientManager thriftClientManager = new ThriftClientManager();
+					thriftClientManager.setServiceIfaceClassName(serviceIfaceClassName);
+					thriftClientManager.setServiceClassName(serviceClassName);
+					thriftClientManager.setServiceClientClassName(serviceClientClassName);
+					thriftClientManager.setClientClazz(clientClazz);
+
+					thriftClientCache.put(cacheName , thriftClientManager);
+			}
+
+
+			long start = System.currentTimeMillis();
 			result=method.invoke(clientInstance, args);
+
+			//执行时间
+			long invokeTime = System.currentTimeMillis() - start;
+
 //			System.out.println("result : "+result);
 		} catch (Exception e) {
 			//异常处理

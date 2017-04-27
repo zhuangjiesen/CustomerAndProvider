@@ -3,6 +3,7 @@ package com.java.core.rpc.thrift.supports;
 import org.apache.thrift.protocol.TProtocol;
 
 /**
+ *
  * Created by zhuangjiesen on 2017/4/21.
  */
 public class ProtocolManager {

@@ -9,8 +9,8 @@ public class ThreadHelper {
 	 */
 	public static void sleep(long timeßß){
 		try {
-			
-			Thread.currentThread().sleep(150);
+
+			Thread.currentThread().sleep(timeßß);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();

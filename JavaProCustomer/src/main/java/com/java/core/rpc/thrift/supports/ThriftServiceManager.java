@@ -14,7 +14,6 @@ public class ThriftServiceManager {
     private IThriftExceptionResolver thriftExceptionResolver;
 
 
-//    private final ConcurrentHashMap<String,Object> thriftClientCache = new ConcurrentHashMap();
 
 
     public <T> T getThriftClient(Class<T> serviceIfaceClass){
@@ -28,8 +27,11 @@ public class ThriftServiceManager {
         proxyInvocation.setIfaceClazz(serviceIfaceClass);
         // 设置连接池
         proxyInvocation.setThriftConnectionPool(thriftConnectionPool);
-        // 获取远程服务代理类
+
         client = (T) Proxy.newProxyInstance(serviceIfaceClass.getClassLoader(), new Class[]{ serviceIfaceClass }, proxyInvocation);
+
+
+
         return client;
     }
 

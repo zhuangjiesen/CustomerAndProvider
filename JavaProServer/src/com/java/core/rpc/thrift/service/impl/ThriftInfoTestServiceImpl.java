@@ -15,10 +15,10 @@ public class ThriftInfoTestServiceImpl implements IThriftInfoTestService.Iface {
 	@Override
 	public String showInfoData(String name, boolean success, Map<String, String> map) throws TException {
 		// TODO Auto-generated method stub
-		ThreadHelper.sleep(200);
+		ThreadHelper.sleep(300);
 		
 		
-		System.out.println(" ThriftInfoTestServiceImpl doing ...showInfoData()... ");
+		System.out.println(" xxxxxxxxxx ThriftInfoTestServiceImpl doing ...showInfoData()... ");
 		System.out.println(" map : "+ JSONObject.toJSONString(map));
 		System.out.println(" success : "+ success);
 		System.out.println(" name : "+ name);

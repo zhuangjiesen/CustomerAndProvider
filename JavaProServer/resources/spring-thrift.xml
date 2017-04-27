@@ -49,7 +49,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
     <bean class="com.java.core.rpc.thrift.provider.TServerArgsFactory" id="serverArgs" >
         <!-- 端口号 -->
         <property name="transport" ref="transport"  />
-        <property name="selectorThreads" value="10"  />
+        <property name="selectorThreads" value="30"  />
         <property name="workerThreads" value="100"  />
         <property name="transportFactory" ref="transportFactory"  />
         <property name="protocolFactory"  ref="protocolFactory" />

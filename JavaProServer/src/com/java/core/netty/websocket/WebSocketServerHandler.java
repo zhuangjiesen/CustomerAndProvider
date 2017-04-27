@@ -75,15 +75,15 @@ public class WebSocketServerHandler extends ChannelInboundHandlerAdapter    {
 	public void handleHttpRequest(ChannelHandlerContext ctx,
 								  FullHttpRequest req) {
 		//不是websocket请求
-		if (!req.decoderResult().isSuccess()
+		if (!req.getDecoderResult().isSuccess()
 				|| (!this.WEBSOCKET.equals(req.headers().get(this.Upgrade).toString().toLowerCase()))) {
 
 			DefaultFullHttpResponse defaultFullHttpResponse = new DefaultFullHttpResponse(
 					HttpVersion.HTTP_1_1, HttpResponseStatus.BAD_REQUEST);
 
 			// 返回应答给客户端
-			if (defaultFullHttpResponse.status().code() != 200) {
-				ByteBuf buf = Unpooled.copiedBuffer(defaultFullHttpResponse.status().toString(),
+			if (defaultFullHttpResponse.getStatus().code() != 200) {
+				ByteBuf buf = Unpooled.copiedBuffer(defaultFullHttpResponse.getStatus().toString(),
 						CharsetUtil.UTF_8);
 				defaultFullHttpResponse.content().writeBytes(buf);
 				buf.release();
@@ -93,7 +93,7 @@ public class WebSocketServerHandler extends ChannelInboundHandlerAdapter    {
 
 			boolean isKeepAlive = false;
 
-			if ((!isKeepAlive) || defaultFullHttpResponse.status().code() != 200) {
+			if ((!isKeepAlive) || defaultFullHttpResponse.getStatus().code() != 200) {
 				f.addListener(ChannelFutureListener.CLOSE);
 			}
 			return ;
@@ -108,7 +108,7 @@ public class WebSocketServerHandler extends ChannelInboundHandlerAdapter    {
 		WebSocketServerHandshaker handshaker = wsFactory.newHandshaker(req);
 		if (handshaker == null) {
 			WebSocketServerHandshakerFactory
-					.sendUnsupportedVersionResponse(ctx.channel());
+					.sendUnsupportedWebSocketVersionResponse(ctx.channel());
 		} else {
 			handshaker.handshake(ctx.channel(), req);
 		}
