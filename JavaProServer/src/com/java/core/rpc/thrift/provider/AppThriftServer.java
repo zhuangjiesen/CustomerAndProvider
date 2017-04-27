@@ -24,7 +24,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import com.apple.eawt.Application;
 import com.java.core.rpc.thrift.supports.ThriftProcessorFactory;
 
 public class AppThriftServer  implements ApplicationContextAware,InitializingBean {
@@ -82,8 +81,7 @@ public class AppThriftServer  implements ApplicationContextAware,InitializingBea
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		// TODO Auto-generated method stub
-		
-		
+
 	}
 	
 

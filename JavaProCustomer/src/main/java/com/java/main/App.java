@@ -27,12 +27,43 @@ public class App
             }
         };
 
-        doThriftTest(200,testListener);
+        ITestListener dubboTestListener = new ITestListener() {
+            public void doTest() {
+                testService.doDubboTest();
+            }
+        };
+
+        ITestListener dubboInfoTestListener = new ITestListener() {
+            public void doTest() {
+                testService.doDubboInfoTest();
+            }
+        };
+        ITestListener activemqTestListener = new ITestListener() {
+            public void doTest() {
+                testService.doActiveMqTest();
+            }
+        };
+
+
+
+        doConcurentTest(1,testListener);
+        try {
+            Thread.currentThread().sleep(300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        doConcurentTest(100,testListener);
+//        doThriftTest(3000,dubboTestListener);
+//        doThriftTest(3000,dubboInfoTestListener);
+
+//        doThriftTest(1,activemqTestListener);
+
     }
     
 
-
-    public static void doThriftTest (int threadCounts,final ITestListener testListener){
+    //开启并发线程测试
+    public static void doConcurentTest (int threadCounts,final ITestListener testListener){
         final Object waitObj = new Object();
 
         for (int i=0 ;i< threadCounts ;i++) {

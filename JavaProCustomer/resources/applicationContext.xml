@@ -19,6 +19,14 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
     <bean id="testService"  class="com.java.service.TestService"></bean>
     
 
+	<!--
+	<import resource="./spring-dubbo.xml"/>
+	<import resource="./spring-activemq-customer.xml"/>
+
+	-->
 	<import resource="./spring-thrift.xml"/>
+
+
+
 </beans>
 	

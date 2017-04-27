@@ -43,7 +43,7 @@ public class ThriftConnectionPool implements InitializingBean {
 
     private Class protocolTypeClass;
 
-
+    private int waitTimeout = 300;
 
     private int waitQueueSeconds = 10 ;
 
@@ -167,11 +167,17 @@ public class ThriftConnectionPool implements InitializingBean {
                 //没有就等待队列处理
                 threadLock.lock();
                 try {
-                    protocolManager = blockingQueue.take();
+//                    waitTimeout
+                    // waitTimeout 等待
+                    protocolManager = blockingQueue.poll(waitTimeout , TimeUnit.MILLISECONDS);
+//                    protocolManager = blockingQueue.take();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
                     threadLock.unlock();
+                }
+                if (protocolManager == null) {
+                    throw new RuntimeException("连接等待超时");
                 }
 
                 protocol = protocolManager.getProtocol();
@@ -296,7 +302,7 @@ public class ThriftConnectionPool implements InitializingBean {
     * */
     private void reducePool(){
 
-
+        System.out.println("回收线程");
         if (connectionsCount.get() > minConnections) {
 
             ProtocolManager protocolManager = blockingQueue.peek();
@@ -317,6 +323,9 @@ public class ThriftConnectionPool implements InitializingBean {
                 long lru = protocolManager.getLru();
                 //已经 有 keepAlive 秒没有用到了  连接关闭
                 if ((nowTime - lru) > keepAliveTime) {
+
+                    System.out.println("开始回收连接...");
+
                     try {
                        TProtocol protocol = protocolManager.getProtocol();
                         //关闭连接
@@ -370,5 +379,22 @@ public class ThriftConnectionPool implements InitializingBean {
 
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+    }
+
+    public int getKeepAlive() {
+        return keepAlive;
+    }
+
+    public void setKeepAlive(int keepAlive) {
+        this.keepAlive = keepAlive;
+    }
+
+
+    public int getWaitTimeout() {
+        return waitTimeout;
+    }
+
+    public void setWaitTimeout(int waitTimeout) {
+        this.waitTimeout = waitTimeout;
     }
 }
