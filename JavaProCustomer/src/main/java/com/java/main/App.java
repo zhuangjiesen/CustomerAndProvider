@@ -5,6 +5,9 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import com.java.service.TestService;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
+
 /**
  * Hello world!
  *
@@ -13,6 +16,8 @@ public class App
 {
 	
 	private static ApplicationContext applicationContext;
+
+    private static CountDownLatch countDownLatch;
 	
     public static void main( String[] args )
     {
@@ -53,7 +58,18 @@ public class App
             e.printStackTrace();
         }
 
-        doConcurentTest(100,testListener);
+
+//        long start = System.currentTimeMillis();
+//        doConcurentTest(2000,testListener);
+//        try {
+//            countDownLatch.await();
+//            System.out.println(" 执行时间 ： " + (System.currentTimeMillis() - start));
+//
+//            System.out.println(" 执行成功....");
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
 //        doThriftTest(3000,dubboTestListener);
 //        doThriftTest(3000,dubboInfoTestListener);
 
@@ -65,7 +81,7 @@ public class App
     //开启并发线程测试
     public static void doConcurentTest (int threadCounts,final ITestListener testListener){
         final Object waitObj = new Object();
-
+        countDownLatch = new CountDownLatch(threadCounts);
         for (int i=0 ;i< threadCounts ;i++) {
             new Thread(new Runnable() {
 
@@ -86,7 +102,7 @@ public class App
                     }
 
 
-
+                    countDownLatch.countDown();
                 }
             }).start();
         }

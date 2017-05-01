@@ -12,7 +12,8 @@ import org.apache.thrift.TException;
 
 import com.java.core.rpc.thrift.service.IThriftInfoTestService;
 
-import javax.jms.Destination;
+import javax.print.attribute.standard.Destination;
+
 
 public class TestService {
 
