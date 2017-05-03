@@ -45,21 +45,11 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 
 
 	<!-- 服务实例池
+
+	-->
 	<bean id="clientPool" class="com.java.core.rpc.thrift.supports.pool.AppThriftServiceClientPool" >
 		<property name="connectionPool" ref="thriftConnectionPool" />
 	</bean>
-	-->
-	<bean id="clientPool" class="com.java.core.rpc.thrift.supports.pool.CachedThriftServiceClientPool" >
-		<property name="connectionPool" ref="thriftConnectionPool" />
-		<property name="serviceNames">
-			<list >
-				<value>com.java.core.rpc.thrift.service.IThriftInfoTestService</value>
-
-			</list>
-
-		</property>
-	</bean>
-
 
 	<!-- 服务管理类 -->
 	<bean id="thriftServiceManager" class="com.java.core.rpc.thrift.supports.core.AppThriftServiceManager" >

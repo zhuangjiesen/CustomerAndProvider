@@ -60,7 +60,7 @@ public class App
 
 
 //        long start = System.currentTimeMillis();
-//        doConcurentTest(2000,testListener);
+        doConcurentTest(30,testListener);
 //        try {
 //            countDownLatch.await();
 //            System.out.println(" 执行时间 ： " + (System.currentTimeMillis() - start));
