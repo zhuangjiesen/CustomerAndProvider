@@ -13,5 +13,10 @@ public class BeanHelper implements ApplicationContextAware {
 		// TODO Auto-generated method stub
 		context=applicationContext;
 	}
+	
+	
+	public static ApplicationContext getContext(){
+		return context;
+	}
 
 }

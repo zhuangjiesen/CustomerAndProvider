@@ -10,6 +10,8 @@ import java.util.Map;
  */
 public class DubboInfoTestServiceImpl implements IDubboInfoTestService {
 
+    private String name;
+
 
     public String showDubboInfoData(Map<String, Object> map, String name) {
         try {
@@ -31,4 +33,11 @@ public class DubboInfoTestServiceImpl implements IDubboInfoTestService {
     }
 
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

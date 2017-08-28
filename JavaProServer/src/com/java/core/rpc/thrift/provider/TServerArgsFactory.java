@@ -23,6 +23,9 @@ public class TServerArgsFactory implements FactoryBean<Args> {
 	private TProtocolFactory protocolFactory;
 	private TProcessor processor;
 
+
+	private long maxReadBufferBytes = Long.MAX_VALUE;
+
 	@Override
 	public Args getObject() throws Exception {
 		
@@ -30,6 +33,7 @@ public class TServerArgsFactory implements FactoryBean<Args> {
 		args.processor(processor);
 		args.protocolFactory(protocolFactory);
 		args.transportFactory(transportFactory);
+//		args.maxReadBufferBytes = maxReadBufferBytes;
 		if (selectorThreads > 0) {
 			args.selectorThreads = selectorThreads;
 		}

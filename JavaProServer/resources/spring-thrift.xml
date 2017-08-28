@@ -53,18 +53,25 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
         <property name="workerThreads" value="100"  />
         <property name="transportFactory" ref="transportFactory"  />
         <property name="protocolFactory"  ref="protocolFactory" />
+
         
         <!-- 调用过程 -->
         <property name="processor"  ref="thriftProcessorFactory" />
     </bean>
-    
-    <!-- server -->
+
+
+    <!-- server
     <bean class="org.apache.thrift.server.TThreadedSelectorServer" id="threadedSelectorServer" >
-        <!-- 端口号 -->
 	       <constructor-arg index="0" ref="serverArgs" />
     </bean>
-    
-    
+        -->
+    <bean class="com.java.core.rpc.thrift.server.AppTThreadedSelectorServer" id="threadedSelectorServer" >
+        <!-- 端口号 -->
+	       <constructor-arg index="0" ref="serverArgs" />
+
+    </bean>
+
+
     <!--  thrift 的provider的启动类 -->
     <bean class="com.java.core.rpc.thrift.provider.AppThriftServer" init-method="initThriftServer"  >
         <property name="transport" ref="transport"  />

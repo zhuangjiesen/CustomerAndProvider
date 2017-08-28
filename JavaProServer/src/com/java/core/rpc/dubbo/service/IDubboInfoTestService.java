@@ -7,7 +7,7 @@ import java.util.Map;
  */
 public interface IDubboInfoTestService {
 
-    public String showDubboInfoData(Map<String, Object> map, String name);
+    public String showDubboInfoData(Map<String,Object> map , String name);
 
 
 }

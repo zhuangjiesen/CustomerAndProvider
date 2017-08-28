@@ -12,12 +12,25 @@
 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd"
 >
 
-	<!--
-    <bean id="appWebSocketNettyServer" class="com.java.core.netty.websocket.AppWebSocketNettyServer" init-method="startNettyServer" ></bean>
-    -->
-    <bean id="appWebSocketNettyServer" class="com.java.core.netty.thrift.AppThriftNettyServer" init-method="startNettyServer" ></bean>
+	<!-- websocket 配置-->
 
-    
-    
+	<bean id="webSocketMessageHandler" class="com.java.core.netty.websocket.handler.impl.TextFrameWebSocketMessageHandler"  >
+	</bean>
+
+
+	<bean id="webSocketServerHandlerFactory" class="com.java.core.netty.websocket.handler.WebSocketServerHandlerFactory"  >
+		<property name="webSocketMessageHandler" ref="webSocketMessageHandler" ></property>
+	</bean>
+
+
+	<bean id="webSocketNettyServer" class="com.java.core.netty.websocket.server.WebSocketNettyServer" init-method="startNettyServer" >
+		<property name="port" value="18888" />
+		<property name="webSocketServerHandlerFactory"  ref="webSocketServerHandlerFactory" />
+	</bean>
+
+
+	<bean id="webSocketTestService" class="com.java.service.WebSocketTestService"  >
+	</bean>
+
 </beans>
 	

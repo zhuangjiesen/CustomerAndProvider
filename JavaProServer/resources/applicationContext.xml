@@ -15,13 +15,18 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
     
     <bean id="beanHelper" class="com.java.helper.BeanHelper" ></bean>
     <!--
-        <import resource="./spring-netty.xml"/>
-		<import resource="./spring-dubbo.xml"/>
-	<import resource="./spring-mq-connection.xml"/>
 
+	<import resource="./spring-mq-connection.xml"/>
+	<import resource="./spring-netty.xml"/>
+
+
+	<import resource="./spring-thrift.xml"/>
+
+		<import resource="./spring-dubbo.xml"/>
 
      -->
-	<import resource="./spring-thrift.xml"/>
+
+	<import resource="./spring-netty-websocket.xml"/>
 
 
 </beans>

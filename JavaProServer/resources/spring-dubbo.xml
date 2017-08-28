@@ -13,22 +13,33 @@
   
     <!-- 使用zookeeper注册中心暴露服务地址 -->  
     <!-- <dubbo:registry address="multicast://224.5.6.7:1234" /> -->  
-    <dubbo:registry address="zookeeper://127.0.0.1:2181" />
+    <dubbo:registry id="register" address="zookeeper://127.0.0.1:2181" />
   
 
     <bean  class="com.java.core.rpc.dubbo.service.impl.DubboTestServiceImpl" id="dubboTestService" ></bean>
 
     <!-- 要暴露的服务接口 -->
-    <dubbo:service interface="com.java.core.rpc.dubbo.service.IDubboTestService" ref="dubboTestService" />
+    <dubbo:service listener="dragsunDubboExporterListener"  registry="register" filter="dragsunDubboFilter"  protocol="dubbo" interface="com.java.core.rpc.dubbo.service.IDubboTestService" ref="dubboTestService" />
 
 
 
     <bean  class="com.java.core.rpc.dubbo.service.impl.DubboInfoTestServiceImpl" id="dubboInfoTestService" ></bean>
 
     <!-- 要暴露的服务接口 -->
-    <dubbo:service interface="com.java.core.rpc.dubbo.service.IDubboInfoTestService" ref="dubboInfoTestService" />
+    <dubbo:service  listener="dragsunDubboExporterListener" registry="register" filter="dragsunDubboFilter"  protocol="thrift" interface="com.java.core.rpc.dubbo.service.IDubboInfoTestService" ref="dubboInfoTestService" />
 
 
+    <!-- 用dubbo协议在20880端口暴露服务 -->
+    <dubbo:protocol   name="dubbo" port="20880" />
+    <dubbo:protocol   name="thrift" port="30880" />
+
+    <!-- thrift -->
+
+    <bean  class="com.java.core.rpc.thrift.service.impl.ThriftInfoTestServiceImpl" id="thriftInfoTestService" ></bean>
+
+    <!-- 生成远程服务代理，可以像使用本地bean一样使用demoService -->
+    <dubbo:service timeout="12000"  registry="register" protocol="thrift"
+                    interface="com.java.core.rpc.thrift.service.IThriftInfoTestService$Iface" ref="thriftInfoTestService" />
 
 
 
