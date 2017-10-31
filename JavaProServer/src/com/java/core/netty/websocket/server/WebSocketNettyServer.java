@@ -53,17 +53,22 @@ public class WebSocketNettyServer {
                 try {
 
                     ServerBootstrap bootstrap = new ServerBootstrap();
-
+                    
                     bootstrap.group(boss, worker);
                     bootstrap.channel(NioServerSocketChannel.class);
                     bootstrap.option(ChannelOption.SO_BACKLOG, 1024); //连接数
                     bootstrap.option(ChannelOption.TCP_NODELAY, true);  //不延迟，消息立即发送
 //		            bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 2000);  //超时时间
                     bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true); //长连接
+
                     bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
+
+
+
                         @Override
                         protected void initChannel(SocketChannel socketChannel)
                                 throws Exception {
+
                             ChannelPipeline p = socketChannel.pipeline();
 
                             p.addLast("http-codec", new HttpServerCodec());

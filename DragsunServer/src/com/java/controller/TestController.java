@@ -22,4 +22,15 @@ public class TestController {
         return "index";
     }
 
+
+
+    @RequestMapping(value = "toWebsocketIndex.do")
+    public String toWebsocketIndex(){
+
+        log.debug("========================");
+
+        return "websocket-chat-test";
+    }
+
+
 }
