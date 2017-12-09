@@ -19,7 +19,7 @@ public class App
 	private static ApplicationContext applicationContext;
 
     private static CountDownLatch countDownLatch;
-	
+
     public static void main( String[] args )
     {
 
