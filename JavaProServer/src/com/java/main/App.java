@@ -94,7 +94,7 @@ public class App
     
     public static void init(){
 
-    	applicationContext = new FileSystemXmlApplicationContext("/resources/applicationContext.xml"); 
-    	
+    	applicationContext = new FileSystemXmlApplicationContext("/resources/applicationContext.xml");
+
     }
 }

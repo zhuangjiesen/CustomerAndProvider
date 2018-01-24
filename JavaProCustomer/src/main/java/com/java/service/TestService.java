@@ -1,21 +1,30 @@
 package com.java.service;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.alibaba.rocketmq.client.exception.MQClientException;
+import com.alibaba.rocketmq.client.producer.SendCallback;
+import com.alibaba.rocketmq.client.producer.SendResult;
+import com.alibaba.rocketmq.common.message.Message;
 import com.java.core.activemq.ProducerService;
+import com.java.core.netty.thrift.AppThriftNettyConsumer;
+import com.java.core.rocketmq.MyProducer;
 import com.java.core.rpc.dubbo.service.IDubboInfoTestService;
 import com.java.core.rpc.dubbo.service.IDubboTestService;
 import com.java.core.rpc.thrift.service.IThriftTestService;
 import com.java.helper.BeanHelper;
+import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.thrift.TException;
 
 import com.java.core.rpc.thrift.service.IThriftInfoTestService;
+import sun.misc.Unsafe;
 
-import javax.print.attribute.standard.Destination;
+import javax.jms.Destination;
 
 
-public class TestService {
+public class TestService  {
 
 	public void doThriftTest(){
 
@@ -44,9 +53,28 @@ public class TestService {
 		map.put("name", "庄杰森");
 		map.put("IThriftInfoTestService", "client");
 		map.put("content", "thrift 的 rpc 调用");
-		String name = "zhuangjiesen ...IThriftInfoTestService doing...";
+
+		StringBuilder msgSb = new StringBuilder();
+		msgSb.append("byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];");
+		msgSb.append("byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];");
+		msgSb.append("byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];");
+		msgSb.append("byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];");
+		msgSb.append("byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];byte[] buf = new byte[1 * 1024 * 1024];");
+		map.put("data", msgSb.toString());
+
+
+//		byte[] buf = new byte[1 * 1024 * 1024];
+//		map.put("data", new String(buf));
+		String name = String.valueOf(System.currentTimeMillis());
 		try {
-			client.showInfoData(name, true, map);
+			String result = client.showInfoData(name, true, map);
+			if (!name.equals(result)) {
+
+				System.out.println("返回结果串了！！！！！============================================");
+			} else {
+				System.out.println("正确的返回结果============================================");
+
+			}
 		} catch (TException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -80,6 +108,33 @@ public class TestService {
 
 
 
+	/*
+	*dubbo 下执行 thrift
+	*
+	* */
+	public void doDubboThriftTest(){
+
+		//运用动态代理 使thrift 接口透明化调用
+		// 与普通的spring bean 一样调用
+		IThriftInfoTestService.Iface thriftInfoTestService = BeanHelper.getContext().getBean(IThriftInfoTestService.Iface.class);
+		Map<String, String> map =new HashMap<String, String>();
+		map.put("name", "庄杰森");
+		map.put("IThriftInfoTestService.Iface", "client");
+		map.put("content", "thrift 的 rpc 调用");
+		String name = "zhuangjiesen ...IThriftInfoTestService.Iface doing...";
+
+
+		try {
+			String result = thriftInfoTestService.showInfoData( name,  true  , map);
+			System.out.println( "result : " + result );
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+
 	public void doDubboInfoTest(){
 
 		//运用动态代理 使thrift 接口透明化调用
@@ -89,12 +144,12 @@ public class TestService {
 		map.put("name", "庄杰森");
 		map.put("IThriftInfoTestService", "client");
 		map.put("content", "dubbo 的 rpc 调用");
-		String name = "zhuangjiesen ...IThriftInfoTestService doing...";
+		String name = " 33333333333 zhuangjiesen ...IThriftInfoTestService doing...";
 
 
 		try {
 			String result = dubboInfoTestService.showDubboInfoData(map ,name);
-			System.out.println( "result : " + result );
+			System.out.println( " 333333333333 result : " + result );
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -109,6 +164,8 @@ public class TestService {
 	public void doActiveMqTest(){
 
 		ProducerService producerService = BeanHelper.getContext().getBean(ProducerService.class);
+		ActiveMQQueue queue = new ActiveMQQueue();
+
 		Destination destination = (Destination)BeanHelper.getContext().getBean("queueDestination_2");
 
 
@@ -116,5 +173,52 @@ public class TestService {
 
 
 	}
+
+
+
+	public void doRocketMqTest(){
+
+		MyProducer producerService = BeanHelper.getContext().getBean(MyProducer.class);
+		try {
+			producerService.getDefaultMQProducer().createTopic("MyTopic", "MyTag", 3);
+			Message message = new Message();
+			message.setTopic("MyTag");
+			producerService.getDefaultMQProducer().send(message, new SendCallback() {
+				public void onSuccess(SendResult sendResult) {
+
+				}
+
+				public void onException(Throwable throwable) {
+
+				}
+			} , 1000);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+
+	}
+
+
+
+	public void doNettyThriftTest(){
+
+		System.out.println("doNettyThriftTest.....");
+
+	}
+
+
+	public void doNettyRequestTest(){
+
+		System.out.println("doNettyRequestTest.....");
+
+		AppThriftNettyConsumer appThriftNettyConsumer = BeanHelper.getContext().getBean(AppThriftNettyConsumer.class);
+//		appThriftNettyConsumer.connect("10.11.165.101" , 38888 , "/chat.do");
+
+
+
+	}
+
+
 
 }

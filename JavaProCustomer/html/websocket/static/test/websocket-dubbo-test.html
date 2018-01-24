@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>websocket实例</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .test-line{
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<h1>websocket实例 dubbo测试</h1>
+<div style="position: relative; left : 50px;" >
+    可选订阅主题:
+    <ul>
+        <li>
+            <div class="targetName">dubbo订阅</div>
+            <div class="targetUri">dubbo</div>
+            <button onclick="onSubUri(this);"> 启动websocket </button>
+            <button onclick="clearConsole(this);"> 清除控制台 </button>
+        </li>
+    </ul>
+</div>
+
+<div style="position: relative; left : 100px;"  >
+    <div>测试目录</div>
+    <div id="subscribeList">
+        <div  class="test-line" >
+            <button data-content="doDubboInfoTest" onclick="onBtnClick(this);">doDubboInfoTest 调用</button>
+        </div>
+        <div  class="test-line" >
+            <button data-content="doDubboTest" onclick="onBtnClick(this);">doDubboTest 调用</button>
+        </div>
+    </div>
+
+    <div id="responseList">
+    </div>
+
+</div>
+
+
+
+
+</body>
+<script type="text/javascript" src="../../js/jquery-1.12.0.js"></script>
+<script type="text/javascript" src="../../js/location-message-ws.js"></script>
+<script type="text/javascript" >
+    var webSocketClient = null;
+    function onBtnClick(item) {
+        var content = $(item).attr('data-content');
+        console.log(' content  : ' + content)
+        webSocketClient.send(content);
+    }
+
+    $(document).ready(function () {
+    });
+
+    
+    function clearConsole() {
+        $('#responseList').html('');
+
+    }
+    function onSubUri(item){
+        var targetName = $(item).parent().find('.targetName').text();
+        var targetUri = $(item).parent().find('.targetUri').text();
+        subUri(targetUri);
+        $('#subscribeList').append('<ul id="' + targetUri + '"> ' + '<font style="color: red">' + targetName + '</font>' + ' </ul>')
+    }
+
+    function subUri(uri){
+
+        //走反向代理
+        var url = 'ws://127.0.0.1:38888/' + uri ;
+        webSocketClient = new WebSocketClient(url );
+        webSocketClient.registMessageListener(function(message) {
+            // debugger
+            var data = message.data;
+            var type = message.type;
+            // 后台发送的消息
+            if (data && type == 'message' && data.length > 0 ) {
+                // console.log('data : ' + data)
+
+                console.log('data : ' + data)
+                $('#responseList').append('<li>' + data + '</li>')
+            } else {
+                // console.log(' ping pong hit .....')
+            }
+            // console.log('------消息到达 message : ' , message );
+        });
+        webSocketClient.registCloseEventListener(function(event) {
+            // console.log('------close message : ' , event);
+        });
+        webSocketClient.onError(function(data) {
+            // console.log('------onError message : ' , event);
+        });
+
+        webSocketClient.init(null , function (success, message) {
+            // console.log('success : ' + success + '  message : ' + message);
+            if (success) {
+            } else {
+
+            }
+        });
+    }
+
+</script>
+</html>

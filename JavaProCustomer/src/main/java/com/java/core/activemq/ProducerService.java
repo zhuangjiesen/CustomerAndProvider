@@ -1,10 +1,10 @@
 package com.java.core.activemq;
 
 import javax.annotation.Resource;
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
-import javax.print.attribute.standard.Destination;
 
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;

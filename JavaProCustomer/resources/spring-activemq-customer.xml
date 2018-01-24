@@ -50,7 +50,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 
                                  
 <!-- 生产者 -->
-<bean name="producerService" class="com.java.core.activemq.ProducerService">
+<bean name="producerService" class="com.java.core.activemq.Produ/cerService">
 	<property name="jmsTemplate" ref="jmsTemplate"/>
 </bean>
 

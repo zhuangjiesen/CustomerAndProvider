@@ -1,12 +1,18 @@
 package com.java.main;
 
+import com.java.helper.BeanHelper;
+import com.java.helper.ThreadHelper;
+import com.java.service.*;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
-
-import com.java.service.TestService;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Hello world!
@@ -21,10 +27,10 @@ public class App
 	
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
-        init();
-		final TestService testService=applicationContext.getBean(TestService.class);
 
+        System.out.println( "Hello World!" );
+        applicationContext = SpringInit.init();
+		final TestService testService=applicationContext.getBean(TestService.class);
 
         ITestListener testListener = new ITestListener() {
             public void doTest() {
@@ -35,6 +41,16 @@ public class App
         ITestListener dubboTestListener = new ITestListener() {
             public void doTest() {
                 testService.doDubboTest();
+            }
+        };
+        ITestListener dubboTestInfoListener = new ITestListener() {
+            public void doTest() {
+                testService.doDubboInfoTest();
+            }
+        };
+        ITestListener dubboThriftTestListener = new ITestListener() {
+            public void doTest() {
+                testService.doDubboThriftTest();
             }
         };
 
@@ -49,18 +65,46 @@ public class App
             }
         };
 
+        ITestListener rockmqTestListener = new ITestListener() {
+            public void doTest() {
+                testService.doRocketMqTest();
+            }
+        };
+
+        ITestListener nettyThriftListener = new ITestListener() {
+            public void doTest() {
+                testService.doNettyThriftTest();
+            }
+        };
+
+        ITestListener nettyTestListener = new ITestListener() {
+            public void doTest() {
+                applicationContext.getBean(TestNettyService.class).doNettyCommonTest();
+
+            }
+        };
 
 
-        doConcurentTest(1,testListener);
-        try {
-            Thread.currentThread().sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
 
+
+//        registry.removeBeanDefinition("dragsunTestService");
+//        dragsunTestService = (DragsunTestService)applicationContext.getBean("dragsunTestService");
+//        dragsunTestService.doTestShow();
+//        System.out.println("dragsunTestService....");
+
+//        doConcurentTest(1,activemqTestListener);
+//        doConcurentTest(1,nettyTestListener);
+        doConcurentTest(1,dubboTestInfoListener);
+
+//        try {
+//            Thread.currentThread().sleep(10000);
+//        } catch (Interrupte\dException e) {
+//            e.printStackTrace();
+//        }
+        System.out.println(" 开始执行....");
 //        long start = System.currentTimeMillis();
-        doConcurentTest(30,testListener);
+//        doConcurentTest(1 , testListener);
 //        try {
 //            countDownLatch.await();
 //            System.out.println(" 执行时间 ： " + (System.currentTimeMillis() - start));
@@ -70,10 +114,20 @@ public class App
 //            e.printStackTrace();
 //        }
 
-//        doThriftTest(3000,dubboTestListener);
+//        doConcurentTest(1,dubboTestListener);
+//        doConcurentTest(1,dubboThriftTestListener);
 //        doThriftTest(3000,dubboInfoTestListener);
-
 //        doThriftTest(1,activemqTestListener);
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+
+                }
+            }
+        });
 
     }
     
@@ -109,7 +163,7 @@ public class App
 
 
         try {
-            Thread.currentThread().sleep(1000);
+            Thread.currentThread().sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -125,10 +179,5 @@ public class App
     public interface ITestListener {
         public void doTest();
     }
-    
-    public static void init(){
 
-    	applicationContext = new FileSystemXmlApplicationContext("/resources/applicationContext.xml"); 
-    	
-    }
 }

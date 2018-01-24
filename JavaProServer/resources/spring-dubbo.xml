@@ -19,19 +19,19 @@
     <bean  class="com.java.core.rpc.dubbo.service.impl.DubboTestServiceImpl" id="dubboTestService" ></bean>
 
     <!-- 要暴露的服务接口 -->
-    <dubbo:service listener="dragsunDubboExporterListener"  registry="register" filter="dragsunDubboFilter"  protocol="dubbo" interface="com.java.core.rpc.dubbo.service.IDubboTestService" ref="dubboTestService" />
+    <dubbo:service  registry="register" filter="dragsunDubboFilter"  protocol="dubbo" interface="com.java.core.rpc.dubbo.service.IDubboTestService" ref="dubboTestService" />
 
 
 
     <bean  class="com.java.core.rpc.dubbo.service.impl.DubboInfoTestServiceImpl" id="dubboInfoTestService" ></bean>
 
     <!-- 要暴露的服务接口 -->
-    <dubbo:service  listener="dragsunDubboExporterListener" registry="register" filter="dragsunDubboFilter"  protocol="thrift" interface="com.java.core.rpc.dubbo.service.IDubboInfoTestService" ref="dubboInfoTestService" />
+    <dubbo:service   registry="register" filter="dragsunDubboFilter" protocol="dubbo"  interface="com.java.core.rpc.dubbo.service.IDubboInfoTestService" ref="dubboInfoTestService" />
 
 
     <!-- 用dubbo协议在20880端口暴露服务 -->
-    <dubbo:protocol   name="dubbo" port="20880" />
-    <dubbo:protocol   name="thrift" port="30880" />
+    <dubbo:protocol   name="dubbo" port="20881" />
+    <dubbo:protocol   name="thrift" port="30881" />
 
     <!-- thrift -->
 

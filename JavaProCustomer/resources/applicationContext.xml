@@ -6,26 +6,63 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:aop="http://www.springframework.org/schema/aop"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd    
-            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd    
-            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd  
-http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context-3.0.xsd
+http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+http://www.springframework.org/schema/util
+http://www.springframework.org/schema/util/spring-util-3.0.xsd"
 >
 
-    
-    <bean id="beanHelper" class="com.java.helper.BeanHelper" ></bean>
-    
+
+	<bean id="appApplicationContext" class="com.java.helper.AppApplicationContext" ></bean>
+	<bean id="beanHelper" class="com.java.helper.BeanHelper" ></bean>
+
     
     <bean id="testService"  class="com.java.service.TestService"></bean>
-    
+    <bean id="dragsunTestService"  class="com.java.service.DragsunTestService"></bean>
+
+
+
+	<!--<bean id="aopTest" class="com.java.core.aop.AopTest"/>-->
+	<!--<aop:aspectj-autoproxy proxy-target-class="true" />-->
+	<!--<aop:config>-->
+		<!--<aop:aspect id="myAop" ref="aopTest">-->
+			<!--<aop:pointcut id="targetPointcut"  expression="execution(* com.java.service.*.*(..))" />-->
+			<!--<aop:before method="doBefore" pointcut-ref="targetPointcut" />-->
+			<!--<aop:after method="doAfter" pointcut-ref="targetPointcut" />-->
+		<!--</aop:aspect>-->
+	<!--</aop:config>-->
+
+
+
+	<bean id="dragsunAopHelper" class="com.java.helper.DragsunAopHelper" ></bean>
+
+
+<!--
+	<bean id="distributedLocksService" class="com.java.service.DistributedLocksService" >
+		<property name="distributedLock" ref="distributedLock"></property>
+	</bean>
+	<bean id="distributedLock" class="com.java.core.lock.impl.JedisDistributedLock" ></bean>
+
+-->
 
 	<!--
-	<import resource="./spring-dubbo.xml"/>
+	<import resource="./spring-thrift.xml"/>
+	<import resource="./spring-jedis.xml"/>
+	<import resource="./spring-rocketmq-producer.xml"/>
+
+		<import resource="./spring-thrift.xml"/>
 	<import resource="./spring-activemq-customer.xml"/>
+	<import resource="./spring-netty.xml"/>
 
 	-->
-	<import resource="./spring-thrift.xml"/>
 
+	<import resource="./spring-dubbo.xml"/>
+	<import resource="./websocket/spring-netty-websocket.xml"/>
+	<import resource="./websocket/spring-netty-websocket-test.xml"/>
 
 
 </beans>

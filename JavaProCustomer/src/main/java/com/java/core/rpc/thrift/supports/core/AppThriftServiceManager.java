@@ -19,7 +19,6 @@ public class AppThriftServiceManager {
 
 
     public <T> T getClient(Class<T> serviceIfaceClass){
-
         if (!serviceIfaceClass.isInterface()) {
             throw new RuntimeException("类型错误");
         }

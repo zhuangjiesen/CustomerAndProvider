@@ -18,8 +18,6 @@ public class ThriftSpringFactoryBean<T> implements FactoryBean<T> {
     private boolean isSingleton = true;
 
     public T getObject() throws Exception {
-        System.out.println("ThriftSpringFactoryBean  getObject ...");
-
         return (T) appThriftClientManager.getClient(serviceIfaceClass);
     }
 

@@ -16,7 +16,7 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 	<!--连接设置-->
 	<bean id="socketFactory" class="com.java.core.rpc.thrift.supports.pool.bo.TSocketFactory" >
 		<property name="host" value="127.0.0.1"/>
-		<property name="port" value="29999"/>
+		<property name="port" value="7070"/>
 	</bean>
 
 
@@ -47,13 +47,26 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 	<!-- 服务实例池
 
 	-->
-	<bean id="clientPool" class="com.java.core.rpc.thrift.supports.pool.AppThriftServiceClientPool" >
+
+	<bean id="appClientPool" class="com.java.core.rpc.thrift.supports.pool.AppThriftServiceClientPool" >
 		<property name="connectionPool" ref="thriftConnectionPool" />
 	</bean>
 
+	<bean id="cacheClientPool" class="com.java.core.rpc.thrift.supports.pool.CachedThriftServiceClientPool" >
+		<property name="connectionPool" ref="thriftConnectionPool" />
+		<property name="serviceNames">
+			<list >
+				<value>com.java.core.rpc.thrift.service.IThriftInfoTestService</value>
+
+			</list>
+
+		</property>
+	</bean>
+
+
 	<!-- 服务管理类 -->
 	<bean id="thriftServiceManager" class="com.java.core.rpc.thrift.supports.core.AppThriftServiceManager" >
-		<property name="serviceClientPool"  ref="clientPool" />
+		<property name="serviceClientPool"  ref="cacheClientPool" />
 	</bean>
 
 

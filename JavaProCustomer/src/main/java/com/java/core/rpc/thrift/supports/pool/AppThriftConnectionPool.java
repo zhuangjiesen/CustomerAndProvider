@@ -7,12 +7,11 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
 import org.apache.thrift.transport.*;
 import org.springframework.beans.factory.InitializingBean;
+import sun.misc.Unsafe;
 
 import java.lang.reflect.Constructor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.Collections;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -38,7 +37,7 @@ public class AppThriftConnectionPool  implements InitializingBean ,ConnectionPoo
 
 
     // 等待响应时间 秒
-    private int waitTimeout = 300;
+    private int waitTimeout = 3;
 
     // 线程等待时间 （等待连接池 ） 秒
     private int waitQueueSeconds = 10 ;
@@ -96,15 +95,18 @@ public class AppThriftConnectionPool  implements InitializingBean ,ConnectionPoo
                 thrfitConnection.setProtocol(protocol);
             } else {
                 //没有就等待队列处理
-                threadLock.lock();
+//                threadLock.lock();
                 try {
 //                    waitTimeout
                     // waitTimeout 等待
-                    thrfitConnection = blockingQueue.poll(waitTimeout , TimeUnit.MILLISECONDS);
+
+                    System.out.println("==blockingQueue== ： "+ blockingQueue.size());
+
+                    thrfitConnection = blockingQueue.poll(waitTimeout , TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    threadLock.unlock();
+//                    threadLock.unlock();
                 }
                 if (thrfitConnection == null) {
                     throw new RuntimeException("连接等待超时");
@@ -134,7 +136,6 @@ public class AppThriftConnectionPool  implements InitializingBean ,ConnectionPoo
 
 
     public void recycleProtocol(){
-
         ThriftConnection thriftConnection = protocolLocal.get();
 
         TProtocol protocol = thriftConnection.getProtocol();
@@ -143,10 +144,13 @@ public class AppThriftConnectionPool  implements InitializingBean ,ConnectionPoo
             if (thriftConnection.getProtocol().getTransport() != null && (!thriftConnection.getProtocol().getTransport().isOpen())) {
                 protocol = createNewProtocol();
                 thriftConnection.setProtocol(protocol);
+            } else {
+                protocol.reset();
             }
-            blockingQueue.add(thriftConnection
-            );
+            blockingQueue.add(thriftConnection);
         }
+        System.out.println("==recycleProtocol== ： "+ blockingQueue.size());
+
         protocolLocal.remove();
     }
 

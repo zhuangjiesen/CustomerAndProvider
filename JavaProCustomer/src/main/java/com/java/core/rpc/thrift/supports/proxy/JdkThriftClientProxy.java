@@ -6,6 +6,8 @@ import com.java.core.rpc.thrift.supports.utils.ThriftUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Created by zhuangjiesen on 2017/4/30.
@@ -17,7 +19,10 @@ public class JdkThriftClientProxy implements InvocationHandler {
 
     private ServiceClientPool serviceClientPool;
 
+
     public JdkThriftClientProxy() {
+
+        System.out.println(" public JdkThriftClientProxy ....");
 
     }
 
@@ -32,17 +37,25 @@ public class JdkThriftClientProxy implements InvocationHandler {
 
         try {
             Object clientInstance = null;
+
+
             clientInstance = serviceClientPool.getClientInstance(serviceName);
+
+
+
+
 
             long start = System.currentTimeMillis();
 
             //方法执行
             result = method.invoke(clientInstance, args);
 
-            //执行时间
             long invokeTime = System.currentTimeMillis() - start;
 
-//			System.out.println("result : "+result);
+            System.out.println("result : "+result + "  invokeTime : "+ invokeTime);
+
+            //执行时间
+
         } catch (Exception e) {
             //异常处理
             // TODO: handle exception
