@@ -17,6 +17,23 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 	<!-- websocket 配置-->
 
 	<!-- 请求处理器 -->
+	<bean id="chatTopicHandler" class="com.java.core.netty.websocket.common.topics.ChatTopicHandler"  >
+	</bean>
+	<bean id="chatOnlineListTopicHandler" class="com.java.core.netty.websocket.common.topics.ChatOnlineListTopicHandler"  >
+	</bean>
+
+
+	<bean id="indexTopicHandler" class="com.java.core.netty.websocket.common.topics.IndexTopicHandler"  >
+	</bean>
+	<bean id="newsTopicHandler" class="com.java.core.netty.websocket.common.topics.NewsTopicHandler"  >
+	</bean>
+	<bean id="locationTopicHandler" class="com.java.core.netty.websocket.common.topics.LocationTopicHandler"  >
+	</bean>
+	<bean id="stockInfoTopicHandler" class="com.java.core.netty.websocket.common.topics.StockInfoTopicHandler"  >
+	</bean>
+
+
+
 	<bean id="jedisHandlerAdapter" class="com.java.core.netty.websocket.common.JedisHandlerAdapter"  >
 	</bean>
 
@@ -27,16 +44,6 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 	<bean id="chatHandlerAdapter" class="com.java.core.netty.websocket.chat.ChatHandlerAdapter"  >
 	</bean>
 	<bean id="chatOnlineListHandlerAdapter" class="com.java.core.netty.websocket.chat.ChatOnlineListHandlerAdapter"  >
-	</bean>
-
-
-	<bean id="indexProtocolHandler" class="com.java.core.netty.websocket.common.protocols.IndexProtocolHandler"  >
-	</bean>
-	<bean id="locationProtocolHandler" class="com.java.core.netty.websocket.common.protocols.LocationProtocolHandler"  >
-	</bean>
-	<bean id="newsProtocolHandler" class="com.java.core.netty.websocket.common.protocols.NewsProtocolHandler"  >
-	</bean>
-	<bean id="stockInfoProtocolHandler" class="com.java.core.netty.websocket.common.protocols.StockInfoProtocolHandler"  >
 	</bean>
 
 

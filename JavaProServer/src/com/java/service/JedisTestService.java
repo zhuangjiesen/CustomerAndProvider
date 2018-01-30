@@ -19,6 +19,8 @@ public class JedisTestService implements InitializingBean , ApplicationContextAw
 
 
 
+
+
     public String getString(String key) {
         JedisCommandManager jedis = applicationContext.getBean(JedisManager.class).getJedis();
         String result = jedis.get(key);

@@ -22,14 +22,13 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 
 	<import resource="./spring-thrift.xml"/>
 	<import resource="./jedis/spring-redis.xml"/>
-	<import resource="./websocket/spring-netty-websocket.xml"/>
-	<import resource="./websocket/spring-netty-websocket-test.xml"/>
-
+	<import resource="./spring-dubbo.xml"/>
 
      -->
 
 
-	<import resource="./spring-dubbo.xml"/>
+	<import resource="./websocket/spring-netty-websocket.xml"/>
+	<import resource="./websocket/spring-netty-websocket-test.xml"/>
 
 
 </beans>

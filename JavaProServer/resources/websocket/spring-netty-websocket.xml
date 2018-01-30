@@ -14,6 +14,10 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 
 
 	<!-- 升级请求处理器 -->
+	<bean id="applicationContextHolder" class="com.dragsun.websocket.utils.ApplicationContextHolder"  >
+	</bean>
+
+
 	<bean id="upgradeResolver" class="com.dragsun.websocket.resolver.UpgradeResolver"  >
 	</bean>
 	<!-- 存储管理器 -->
