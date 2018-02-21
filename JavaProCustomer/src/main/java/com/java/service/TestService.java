@@ -4,13 +4,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.alibaba.rocketmq.client.exception.MQClientException;
-import com.alibaba.rocketmq.client.producer.SendCallback;
-import com.alibaba.rocketmq.client.producer.SendResult;
-import com.alibaba.rocketmq.common.message.Message;
+
 import com.java.core.activemq.ProducerService;
 import com.java.core.netty.thrift.AppThriftNettyConsumer;
-import com.java.core.rocketmq.MyProducer;
 import com.java.core.rpc.dubbo.service.IDubboInfoTestService;
 import com.java.core.rpc.dubbo.service.IDubboTestService;
 import com.java.core.rpc.thrift.service.IThriftTestService;
@@ -173,32 +169,6 @@ public class TestService  {
 
 
 	}
-
-
-
-	public void doRocketMqTest(){
-
-		MyProducer producerService = BeanHelper.getContext().getBean(MyProducer.class);
-		try {
-			producerService.getDefaultMQProducer().createTopic("MyTopic", "MyTag", 3);
-			Message message = new Message();
-			message.setTopic("MyTag");
-			producerService.getDefaultMQProducer().send(message, new SendCallback() {
-				public void onSuccess(SendResult sendResult) {
-
-				}
-
-				public void onException(Throwable throwable) {
-
-				}
-			} , 1000);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-
-	}
-
 
 
 	public void doNettyThriftTest(){

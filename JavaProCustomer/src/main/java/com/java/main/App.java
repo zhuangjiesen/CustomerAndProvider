@@ -65,11 +65,6 @@ public class App
             }
         };
 
-        ITestListener rockmqTestListener = new ITestListener() {
-            public void doTest() {
-                testService.doRocketMqTest();
-            }
-        };
 
         ITestListener nettyThriftListener = new ITestListener() {
             public void doTest() {
