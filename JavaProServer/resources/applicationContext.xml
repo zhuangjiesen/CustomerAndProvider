@@ -12,7 +12,7 @@
 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd"
 >
 
-    
+    <context:component-scan base-package="com.java"/>
     <bean id="beanHelper" class="com.java.helper.BeanHelper" ></bean>
     <!--
 
@@ -22,13 +22,14 @@ http://www.springframework.org/schema/aop http://www.springframework.org/schema/
 
 	<import resource="./spring-thrift.xml"/>
 	<import resource="./jedis/spring-redis.xml"/>
-	<import resource="./spring-dubbo.xml"/>
-
-     -->
 
 
 	<import resource="./websocket/spring-netty-websocket.xml"/>
 	<import resource="./websocket/spring-netty-websocket-test.xml"/>
+
+     -->
+	<import resource="./spring-dubbo.xml"/>
+
 
 
 </beans>

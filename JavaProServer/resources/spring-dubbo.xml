@@ -14,19 +14,20 @@
     <!-- 使用zookeeper注册中心暴露服务地址 -->  
     <!-- <dubbo:registry address="multicast://224.5.6.7:1234" /> -->  
     <dubbo:registry id="register" address="zookeeper://127.0.0.1:2181" />
-  
+
+
+    <dubbo:registry id="redisRegister" address="customerRedis://127.0.0.1:6379?password=redis"  />
 
     <bean  class="com.java.core.rpc.dubbo.service.impl.DubboTestServiceImpl" id="dubboTestService" ></bean>
-
     <!-- 要暴露的服务接口 -->
-    <dubbo:service  registry="register" filter="dragsunDubboFilter"  protocol="dubbo" interface="com.java.core.rpc.dubbo.service.IDubboTestService" ref="dubboTestService" />
+    <dubbo:service  registry="redisRegister" filter="dragsunDubboFilter"  protocol="dubbo" interface="com.java.core.rpc.dubbo.service.IDubboTestService" ref="dubboTestService" />
 
 
 
     <bean  class="com.java.core.rpc.dubbo.service.impl.DubboInfoTestServiceImpl" id="dubboInfoTestService" ></bean>
 
     <!-- 要暴露的服务接口 -->
-    <dubbo:service   registry="register" filter="dragsunDubboFilter" protocol="dubbo"  interface="com.java.core.rpc.dubbo.service.IDubboInfoTestService" ref="dubboInfoTestService" />
+    <dubbo:service   registry="redisRegister" filter="dragsunDubboFilter" protocol="dubbo"  interface="com.java.core.rpc.dubbo.service.IDubboInfoTestService" ref="dubboInfoTestService" />
 
 
     <!-- 用dubbo协议在20880端口暴露服务 -->

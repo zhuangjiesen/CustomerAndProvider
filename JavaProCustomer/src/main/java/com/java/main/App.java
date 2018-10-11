@@ -90,7 +90,7 @@ public class App
 
 //        doConcurentTest(1,activemqTestListener);
 //        doConcurentTest(1,nettyTestListener);
-//        doConcurentTest(1,dubboTestInfoListener);
+        doConcurentTest(1,dubboTestInfoListener);
 
 //        try {
 //            Thread.currentThread().sleep(10000);

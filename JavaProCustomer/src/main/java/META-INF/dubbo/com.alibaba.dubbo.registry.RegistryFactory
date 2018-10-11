@@ -1,0 +1,1 @@
+customerRedis=com.java.core.rpc.registry.CustomerRedisRegistryFactory

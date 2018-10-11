@@ -57,11 +57,11 @@ http://www.springframework.org/schema/util/spring-util-3.0.xsd"
 		<import resource="./spring-thrift.xml"/>
 	<import resource="./spring-activemq-customer.xml"/>
 	<import resource="./spring-netty.xml"/>
-	<import resource="./spring-dubbo.xml"/>
+	<import resource="./spring-canal.xml"/>
 
 	-->
 
-	<import resource="./spring-canal.xml"/>
+	<import resource="./spring-dubbo.xml"/>
 
 </beans>
 	

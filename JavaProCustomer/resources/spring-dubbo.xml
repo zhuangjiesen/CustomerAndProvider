@@ -13,15 +13,18 @@
   
     <!-- 使用zookeeper注册中心暴露服务地址 -->  
     <!-- <dubbo:registry address="multicast://224.5.6.7:1234" /> -->  
-    <dubbo:registry id="zkRegisty" address="zookeeper://127.0.0.1:2181" />
-  
+    <!--<dubbo:registry id="zkRegisty" address="zookeeper://127.0.0.1:2181" />-->
+
+    <dubbo:registry id="redisRegister" address="customerRedis://127.0.0.1:6379?password=redis"  />
+
+
     <!-- 生成远程服务代理，可以像使用本地bean一样使用demoService -->  
-    <dubbo:reference   protocol="dubbo"  id="dubboTestService"
+    <dubbo:reference registry="redisRegister"   protocol="dubbo"  id="dubboTestService"
         interface="com.java.core.rpc.dubbo.service.IDubboTestService" />
 
 
     <!-- 生成远程服务代理，可以像使用本地bean一样使用demoService -->
-    <dubbo:reference    protocol="dubbo" id="dubboInfoTestService"
+    <dubbo:reference registry="redisRegister"   protocol="dubbo" id="dubboInfoTestService"
         interface="com.java.core.rpc.dubbo.service.IDubboInfoTestService"  />
 
 
