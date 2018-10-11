@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @param
@@ -43,10 +44,12 @@ public class NioServer {
                     serverSocketChannel = ServerSocketChannel.open();
                     //创建Selector
                     Selector acceptor = Selector.open();
+                    serverSocketChannel.bind(new InetSocketAddress("127.0.0.1", 38888));
+
                     serverSocketChannel.configureBlocking(false);
                     //注册前 serverSocketChannel 必须设置成非阻塞
                     serverSocketChannel.register(acceptor, SelectionKey.OP_ACCEPT);
-                    serverSocketChannel.bind(new InetSocketAddress("127.0.0.1", 38888));
+
                     System.out.println(" server start ....");
                     while (true) {
                         int sel = acceptor.select();
@@ -111,7 +114,6 @@ public class NioServer {
 
         * */
 
-
         //注册读写事件
         registReadWriter(socketChannel);
     }
@@ -138,6 +140,7 @@ public class NioServer {
     public static class ReadWriteThread implements Runnable {
         /** **/
         private static Selector selector;
+        private static AtomicBoolean isRegist = new AtomicBoolean(false);
 
         public void registerSocketChannel(SocketChannel socketChannel) {
             try {
@@ -194,8 +197,10 @@ public class NioServer {
                                 System.out.println("没有事件匹配！");
                             }
                         }
+                    } else {
+                        //可以用别的方法实现
+                        Thread.currentThread().sleep(300);
                     }
-
 
                 }
             } catch (Exception e) {

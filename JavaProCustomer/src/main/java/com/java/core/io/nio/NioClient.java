@@ -33,7 +33,7 @@ public class NioClient {
         readThread.start();
         writeThread.start();
 
-        while(true) {}
+//        while(true) {}
 
     }
 
