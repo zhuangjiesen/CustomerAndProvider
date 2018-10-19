@@ -7,6 +7,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -199,7 +200,7 @@ public class NioServer {
                         }
                     } else {
                         //可以用别的方法实现
-                        Thread.currentThread().sleep(300);
+                        Thread.currentThread().sleep(3000);
                     }
 
                 }
@@ -249,7 +250,7 @@ public class NioServer {
             ackSb.append(System.currentTimeMillis());
             ackSb.append("\r\n");
             //写消息
-            ByteBuffer buf = ByteBuffer.allocate(48);
+            ByteBuffer buf = ByteBuffer.allocate(128);
             String response = ackSb.toString();
             System.out.println("写ack : " + response);
             buf.put(response.getBytes());
