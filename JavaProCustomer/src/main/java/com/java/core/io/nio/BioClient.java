@@ -24,7 +24,7 @@ public class BioClient {
         client.setReuseAddress(false);
         client.setReceiveBufferSize(48);
 
-        client.connect(new InetSocketAddress("127.0.0.1", 38888));
+        client.connect(new InetSocketAddress("dongjian-api-dev.netease.com", 80));
         Thread readThread = new Thread(new ReadThread(client.getInputStream()));
         Thread writeThread = new Thread(new WriteThread(client.getOutputStream()));
 

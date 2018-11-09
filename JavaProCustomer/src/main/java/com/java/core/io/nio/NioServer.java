@@ -49,11 +49,15 @@ public class NioServer {
 
                     serverSocketChannel.configureBlocking(false);
                     //注册前 serverSocketChannel 必须设置成非阻塞
-                    serverSocketChannel.register(acceptor, SelectionKey.OP_ACCEPT);
+//                    SelectionKey selectionKey = serverSocketChannel.register(acceptor, SelectionKey.OP_ACCEPT);
+                    SelectionKey selectionKey = serverSocketChannel.register(acceptor, 0);
+                    selectionKey.interestOps(SelectionKey.OP_ACCEPT);
+                    System.out.println("interestOps : " + selectionKey.interestOps());
 
                     System.out.println(" server start ....");
                     while (true) {
                         int sel = acceptor.select();
+
                         if (sel > 0) {
                             // accept 事件触发
                             Set<SelectionKey> selectedKeys = acceptor.selectedKeys();

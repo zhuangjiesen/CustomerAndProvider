@@ -117,7 +117,7 @@
     <orderEntry type="library" name="Maven: asm:asm-commons:3.3.1" level="project" />
     <orderEntry type="library" name="Maven: asm:asm-tree:3.3.1" level="project" />
     <orderEntry type="library" name="Maven: asm:asm-util:3.3.1" level="project" />
-    <orderEntry type="library" name="Maven: io.netty:netty-all:4.1.9.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-all:4.1.14.Final" level="project" />
     <orderEntry type="library" name="Maven: javax.jms:jms:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.activemq:activemq-all:5.14.1" level="project" />
     <orderEntry type="library" name="Maven: org.mortbay.jetty:jetty:6.1.26" level="project" />
@@ -145,5 +145,7 @@
     <orderEntry type="library" name="Maven: commons-configuration:commons-configuration:1.8" level="project" />
     <orderEntry type="library" name="Maven: io.reactivex:rxjava:1.2.0" level="project" />
     <orderEntry type="library" name="Maven: org.hdrhistogram:HdrHistogram:2.1.9" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.ant:ant:1.9.4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.ant:ant-launcher:1.9.4" level="project" />
   </component>
 </module>
