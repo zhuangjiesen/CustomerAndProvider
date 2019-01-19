@@ -19,8 +19,8 @@ public class MuiltiBioClient {
                 try {
                     System.out.println("t1 start...");
                     Socket socket = new Socket();
-                    socket.connect(new InetSocketAddress("127.0.0.1", 3333));
-
+                    socket.connect(new InetSocketAddress("127.0.0.1", 3333) , 3000);
+                    System.out.println("t1 connected...");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -37,8 +37,8 @@ public class MuiltiBioClient {
                 try {
                     System.out.println("t2 start...");
                     Socket socket = new Socket();
-                    socket.connect(new InetSocketAddress("127.0.0.1", 3333));
-
+                    socket.connect(new InetSocketAddress("127.0.0.1", 3333) , 1000);
+                    System.out.println("t2 connected...");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -55,8 +55,8 @@ public class MuiltiBioClient {
                 try {
                     System.out.println("t3 start...");
                     Socket socket = new Socket();
-                    socket.connect(new InetSocketAddress("127.0.0.1", 3333));
-
+                    socket.connect(new InetSocketAddress("127.0.0.1", 3333), 3000);
+                    System.out.println("t3 connected...");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

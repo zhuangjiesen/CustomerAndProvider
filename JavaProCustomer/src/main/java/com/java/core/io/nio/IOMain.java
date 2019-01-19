@@ -13,14 +13,35 @@ import java.nio.channels.Selector;
  */
 public class IOMain {
 
-    public static void main(String[] args) {
-        System.out.println(SelectionKey.OP_READ);
-        System.out.println(SelectionKey.OP_WRITE);
-        System.out.println(SelectionKey.OP_CONNECT);
-        System.out.println(SelectionKey.OP_ACCEPT);
-        System.out.println(SelectionKey.OP_CONNECT|SelectionKey.OP_WRITE|SelectionKey.OP_READ|SelectionKey.OP_ACCEPT);
+    public static void main(String[] args) throws InterruptedException {
 
 
+
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println(" i am a hook ");
+
+                while (true) {
+                    try {
+
+                        Thread.currentThread().sleep(3000);
+                        System.out.println("wakeup...");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+            }
+        }));
+
+
+
+        while (true) {
+            Thread.currentThread().sleep(3000);
+            System.out.println("wakeup...");
+        }
 
 
 

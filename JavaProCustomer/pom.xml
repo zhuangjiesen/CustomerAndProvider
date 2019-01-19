@@ -330,13 +330,6 @@
           <artifactId>zkclient</artifactId>
           <version>0.2</version>
       </dependency>
-      <!-- https://mvnrepository.com/artifact/org.apache.hadoop/zookeeper -->
-      <dependency>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>zookeeper</artifactId>
-          <version>3.3.1</version>
-      </dependency>
-
 
 
       <!-- https://mvnrepository.com/artifact/org.apache.thrift/libthrift -->
@@ -532,6 +525,85 @@
           <artifactId>netty-all</artifactId>
           <version>4.1.14.Final</version>
       </dependency>
+      <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+          <version>2.5.3</version>
+      </dependency>
+      <dependency>
+          <groupId>com.caucho</groupId>
+          <artifactId>hessian</artifactId>
+          <version>4.0.38</version>
+      </dependency>
+      <dependency>
+          <groupId>com.google.protobuf</groupId>
+          <artifactId>protobuf-java</artifactId>
+          <version>3.5.0</version>
+      </dependency>
+      <!--<dependency>-->
+          <!--<groupId>com.esotericsoftware</groupId>-->
+          <!--<artifactId>kryo</artifactId>-->
+          <!--<version>3.0.3</version>-->
+      <!--</dependency>-->
+      <dependency>
+          <groupId>com.esotericsoftware</groupId>
+          <artifactId>kryo-shaded</artifactId>
+          <version>4.0.0</version>
+      </dependency>
+      <dependency>
+          <groupId>net.sf.dozer</groupId>
+          <artifactId>dozer</artifactId>
+          <version>5.4.0</version>
+      </dependency>
+
+      <dependency>
+          <groupId>com.github.davidb</groupId>
+          <artifactId>metrics-influxdb</artifactId>
+          <version>0.9.3</version>
+      </dependency>
+      <!-- https://mvnrepository.com/artifact/com.codahale.metrics/metrics-core -->
+      <dependency>
+          <groupId>com.codahale.metrics</groupId>
+          <artifactId>metrics-core</artifactId>
+          <version>3.0.2</version>
+      </dependency>
+
+      <!-- https://mvnrepository.com/artifact/org.scala-lang/scala-library -->
+      <dependency>
+          <groupId>org.scala-lang</groupId>
+          <artifactId>scala-library</artifactId>
+          <version>2.10.4</version>
+      </dependency>
+      <!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
+      <!--<dependency>-->
+          <!--<groupId>redis.clients</groupId>-->
+          <!--<artifactId>jedis</artifactId>-->
+          <!--<version>2.6.2</version>-->
+      <!--</dependency>-->
+      <dependency>
+          <groupId>org.apache.curator</groupId>
+          <artifactId>curator-client</artifactId>
+          <version>2.9.1</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.curator</groupId>
+          <artifactId>curator-framework</artifactId>
+          <version>2.9.1</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.curator</groupId>
+          <artifactId>curator-recipes</artifactId>
+          <version>2.9.1</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.zookeeper</groupId>
+          <artifactId>zookeeper</artifactId>
+          <version>3.4.6</version>
+      </dependency>
+
+
+
+
 
   </dependencies>
 

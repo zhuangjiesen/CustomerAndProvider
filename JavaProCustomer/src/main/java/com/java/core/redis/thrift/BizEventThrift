@@ -1,0 +1,32 @@
+namespace java com.java.core.redis.thrift
+
+
+struct BizEventThrift {
+  1: i64 id,
+  2: string date,
+  3: string name,
+  4: string title,
+  5: i32 type,
+  6: string team,
+  7: string imageObj,
+  8: string coverObj,
+  9: i32 direction,
+  10: string description,
+  11: i32 sequence,
+  12: i32 category,
+  13: string authorInfo,
+  14: string url,
+  15: i32 listStatus,
+  16: i32 instSearchStatus,
+  17: i64 instId,
+  18: i32 hasAndroid,
+  19: i32 hasIOS,
+  20: string androidVersion,
+  21: string iosVersion,
+  22: i32 platformType,
+  23: i32 coverType,
+  24: string coverResourceList,
+  25: list<string> coverResourceIdArr,
+  26: string detailResourceList,
+  27: list<string> detailResourceIdArr
+}

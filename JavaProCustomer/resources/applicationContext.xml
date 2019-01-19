@@ -38,7 +38,14 @@ http://www.springframework.org/schema/util/spring-util-3.0.xsd"
 
 
 
-	<bean id="dragsunAopHelper" class="com.java.helper.DragsunAopHelper" ></bean>
+	<bean id="dragsunAopHelper" class="com.java.helper.DragsunAopHelper" >
+		<property name="configValue" value="${placeHolder-config}"/>
+	</bean>
+
+	<bean id="customerPropertyPlaceholderConfigurer" class="com.java.core.spring.config.CustomerPropertyPlaceholderConfigurer" ></bean>
+
+
+
 
 
 <!--
@@ -61,7 +68,7 @@ http://www.springframework.org/schema/util/spring-util-3.0.xsd"
 
 	-->
 
-	<import resource="./spring-dubbo.xml"/>
+	<!--<import resource="./spring-dubbo.xml"/>-->
 
 </beans>
 	

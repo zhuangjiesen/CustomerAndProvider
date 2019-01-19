@@ -1,0 +1,31 @@
+syntax = "proto3";
+package com.java.core.redis.protobuf;
+
+message BizEvent {
+  int64 id = 1;
+  string date = 2;
+  string name = 3;
+  string title = 4;
+  int32 type = 5;
+  string team = 6;
+  string imageObj = 7;
+  string coverObj = 8;
+  int32 direction = 9;
+  string description = 10;
+  int32 sequence = 11;
+  int32 category = 12;
+  string authorInfo = 13;
+  string url = 14;
+  int32 listStatus = 15;
+  int32 instSearchStatus = 16;
+  int64 instId = 17;
+  int32 hasAndroid = 18;
+  int32 hasIOS = 19;
+  string androidVersion = 20;
+  string iosVersion = 21;
+  int32 platformType = 22;
+  int32 coverType = 23;
+  string coverResourceList = 24;
+  string detailResourceList = 25;
+  string detailResourceIdArr = 26;
+}
